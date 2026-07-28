@@ -1,0 +1,55 @@
+/* Straight Talking — design tokens
+   Single source of truth for colour, type and spacing.
+   Consumed via var(--token) throughout the app.
+   Direction: premium editorial, warm, clinical. Near-monochrome ink on warm
+   paper, hairline rules, one restrained accent. Serif display, sans UI. */
+
+:root {
+  /* Brand — light surfaces */
+  --st-ink: #14312d;      /* near-black, deep teal-slate: headings and body */
+  --st-teal: #0b6b64;     /* the single restrained accent, used sparingly */
+  --st-teal-600: #0e857d;
+  --st-teal-500: #13a093;
+  --st-teal-100: #d4e7e3;
+  --st-teal-50: #eaf2ef;
+  --st-coral: #cf6a53;    /* demoted: concern / negative states only */
+  --st-coral-soft: #f6e7e2;
+  --st-amber: #c98a2e;
+  --st-slate: #46564f;    /* secondary body text */
+  --st-line: #e5e0d4;     /* warm hairline */
+  --st-off: #f4f1e9;      /* warm paper: primary background */
+  --st-white: #ffffff;    /* cards lift off the warm paper */
+
+  /* Brand — dark surfaces (intelligence / hero / board strip) */
+  --st-bg: #04211e;
+  --st-bg-2: #062a26;
+  --st-panel: #08302b;
+  --st-panel-2: #0a3a34;
+  --st-edge: #12463f;
+  --st-edge-2: #1c5850;
+  --st-teal-g: #2ad8be;
+  --st-teal-dim: #7fd8ce;
+  --st-coral-g: #ff9e8c;
+  --st-fg: #eaf6f3;
+  --st-mut: #8fb6af;
+  --st-mut-2: #5f8b83;
+
+  /* Type — editorial serif display, clean sans for UI, mono for technical labels */
+  --ff-display: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --ff-body: 'Inter', system-ui, sans-serif;
+  --ff-mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Radius — restrained, editorial rather than pill-soft */
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 18px;
+
+  /* Elevation — flatter; hairlines carry structure, not big soft shadows */
+  --sh-sm: 0 1px 2px rgba(20, 49, 45, 0.05);
+  --sh-md: 0 4px 18px rgba(20, 49, 45, 0.06);
+  --sh-lg: 0 30px 70px rgba(4, 30, 27, 0.4);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

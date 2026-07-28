@@ -1,0 +1,123 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ff-body);
+  color: var(--st-ink);
+  background: var(--st-off);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+}
+
+/* The serif display carries editorial weight; let it optically size and keep
+   glyphs settled rather than trendy-wonky. */
+h1, h2, h3, h4, h5 {
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--st-teal-100);
+}
+
+/* Shared reveal-on-scroll primitive (see useReveal) */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 0.8s var(--ease-out);
+}
+.reveal[data-visible='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Keyframes used across surfaces */
+@keyframes st-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes st-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes st-blip {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes st-beat {
+  0% {
+    box-shadow: 0 0 0 0 rgba(42, 216, 190, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(42, 216, 190, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(42, 216, 190, 0);
+  }
+}
+@keyframes st-ping {
+  0% {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+  }
+  100% {
+    width: 64px;
+    height: 64px;
+    opacity: 0;
+  }
+}
+@keyframes st-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2vh);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
