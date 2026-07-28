@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Straight Talking — independent patient feedback platform. Capture, route and understand patient voice.",
+  "description": "Straight Talking: independent patient feedback platform. Capture, route and understand patient voice.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.node.json && vite build",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.node.json && vite build && npm run build:viewer && node scripts/place-demo.mjs",
+    "build:viewer": "vite build --config vite.viewer.config.ts",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json"
   },
