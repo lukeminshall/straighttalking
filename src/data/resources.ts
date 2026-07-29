@@ -55,7 +55,7 @@ export const RESOURCES: Resource[] = [
   { id: 'nfctag', name: 'NFC tap tags', desc: 'Tap a phone, no camera needed', category: 'nfc', example: 'Discreet tags that open your feedback page when a patient taps their phone against them, for anyone who finds scanning a QR fiddly.', icon: 'nfc', price: 14, qty: 0, unit: 'pack of 5' },
 ]
 
-export const ANNUAL_FEE = 100
+export const ANNUAL_FEE = 200
 
 export const gbp = (n: number) => `£${n.toFixed(2)}`
 

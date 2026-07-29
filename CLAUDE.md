@@ -70,7 +70,7 @@ When you add a new surface, wire it into BOTH `App.tsx` (a `<Route>` plus the de
 - **Instrument routing is patient-led.** The patient self-declares what they were seen for (plain-language options in `FeedbackFlow.tsx` -> `PATHWAYS`), and that single choice picks the instruments. No PAS/EPR eligibility engine. Everyone gets FFT and the experience questions; a procedure additionally fires the matching PROM baseline (`PROM_SETS`).
 - **A PROM is a matched pair.** A baseline alone is not an outcome. The flow captures the "before" at first scan and offers an optional follow-up contact (mobile/email) so the "after" can be sent at the validated interval and linked. No follow-up contact means no pair, just a baseline. This is the one thing outcomes need, and it is a contact point, not an integration.
 - **Instruments are shown paraphrased** in the demo for copyright reasons. In production these are the licensed instruments: Oxford Hip/Knee via Oxford University Innovation, EQ-5D via EuroQol, Cat-PROM5. Keep the paraphrase-plus-note pattern until licensing is in place.
-- **Pricing is a flat GBP 100 annual fee only** (`ANNUAL_FEE`), plus one-off resources. Not per-seat, not monthly.
+- **Pricing is a flat GBP 200 annual fee only** (`ANNUAL_FEE`), plus one-off resources. Not per-seat, not monthly.
 - **Never collect card details in the client.** Checkout is a mock; real payment goes through a PCI-compliant provider (Stripe). Do not add card-number inputs.
 
 ## House style

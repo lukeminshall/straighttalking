@@ -234,7 +234,7 @@ export function ProviderLanding() {
           ))}
         </div>
         <Reveal className={styles.matFoot}>
-          A flat £100 a year covers the platform. Materials are the only extras, and you top them up whenever you need to.
+          A flat £200 a year covers the platform. Materials are the only extras, and you top them up whenever you need to.
         </Reveal>
       </section>
 

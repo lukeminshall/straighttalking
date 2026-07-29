@@ -27,7 +27,7 @@ export function Reorder() {
             <Logo variant="colour" height={30} />
           </div>
           <span className={styles.acct}>
-            {ACCOUNT.org} · <b>£100 annual plan active</b>
+            {ACCOUNT.org} · <b>£200 annual plan active</b>
           </span>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
-import { RESOURCES, CATEGORIES, resourcesByCategory, ANNUAL_FEE as ANNUAL, gbp, priceLabel } from '@/data/resources'
+import { RESOURCES, CATEGORIES, resourcesByCategory, ANNUAL_FEE as ANNUAL, gbp } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
 import { QRCode } from '@/components/brand/QRCode'
 import styles from './Setup.module.css'
@@ -33,9 +33,9 @@ export function Setup() {
   const [details, setDetails] = useState({ display: '', reviewUrl: '', governance: 'Datix' })
   const [guideOpen, setGuideOpen] = useState(true)
 
-  const resourceTotal = useMemo(() => RESOURCES.reduce((s, r) => s + r.price * (cart[r.id] || 0), 0), [cart])
-  const subTotal = ANNUAL
-  const total = resourceTotal + subTotal
+  // Materials are chosen here but confirmed, priced and arranged as a follow-up
+  // once the clinic is registered. Only the flat annual fee is due at signup.
+  const dueToday = ANNUAL
 
   const toggle = (id: string) =>
     setChosen((prev) => {
@@ -78,9 +78,9 @@ export function Setup() {
             </div>
           ))}
           <div className={styles.railTotal}>
-            <span>Estimated total</span>
-            <b>{gbp(total)}</b>
-            <small>{gbp(ANNUAL)}/yr + {gbp(resourceTotal)} resources</small>
+            <span>Due at signup</span>
+            <b>{gbp(dueToday)}</b>
+            <small>{gbp(ANNUAL)}/yr · materials arranged after signup</small>
           </div>
         </aside>
 
@@ -148,8 +148,8 @@ export function Setup() {
 
           {step === 2 && (
             <div className={styles.screen}>
-              <h2>Order your materials</h2>
-              <p className={styles.lead}>Everything patients scan or tap, shipped to each site. Digital assets are included and live the same day. Priced at cost, never per-scan.</p>
+              <h2>Choose your materials</h2>
+              <p className={styles.lead}>Pick what you would like for each site. Nothing to pay for these now: we confirm quantities and arrange printing as a follow-up once you are set up. Digital assets are included and go live straight away.</p>
               <div className={styles.shop}>
                 {CATEGORIES.map((cat) => (
                   <div key={cat.key} className={styles.catGroup}>
@@ -166,7 +166,6 @@ export function Setup() {
                           <span className={styles.resEg}>{r.example}</span>
                         </div>
                         <div className={styles.resRight}>
-                          <span className={styles.price} data-free={r.price === 0}>{priceLabel(r)}</span>
                           {r.category === 'digital' ? (
                             <button
                               className={styles.toggle}
@@ -188,9 +187,6 @@ export function Setup() {
                   </div>
                 ))}
               </div>
-              <div className={styles.resTotal}>
-                Materials subtotal <b>{gbp(resourceTotal)}</b>
-              </div>
               <div className={styles.actions}>
                 <button className={styles.back} onClick={back}>
                   ← Back
@@ -205,23 +201,23 @@ export function Setup() {
           {step === 3 && (
             <div className={styles.screen}>
               <h2>Review &amp; pay</h2>
-              <p className={styles.lead}>A single £100 annual fee, plus any resources you ordered. Cancel anytime.</p>
+              <p className={styles.lead}>A single £200 annual fee covers every site. Cancel anytime. Your materials are arranged as a follow-up once you are set up, so there is nothing else to pay today.</p>
               <div className={styles.summary}>
                 <div className={styles.sumRow}>
                   <span>Straight Talking annual fee ({org.sites} {org.sites === 1 ? 'site' : 'sites'})</span>
                   <b>{gbp(ANNUAL)}/yr</b>
                 </div>
-                {RESOURCES.filter((r) => (cart[r.id] || 0) > 0).map((r) => (
-                  <div key={r.id} className={styles.sumRow}>
-                    <span>
-                      {r.name}{r.category === 'digital' ? '' : ` × ${cart[r.id]}`}
-                    </span>
-                    <b>{r.price === 0 ? 'Included' : gbp(r.price * cart[r.id])}</b>
-                  </div>
-                ))}
+                <div className={styles.sumRow}>
+                  <span>Digital assets (email, SMS, screen, embed)</span>
+                  <b>Included</b>
+                </div>
+                <div className={styles.sumRow}>
+                  <span>Printed materials</span>
+                  <b>Arranged after signup</b>
+                </div>
                 <div className={styles.sumTotal}>
                   <span>Due today</span>
-                  <b>{gbp(total)}</b>
+                  <b>{gbp(dueToday)}</b>
                 </div>
               </div>
               <div className={styles.secure}>
