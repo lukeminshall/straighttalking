@@ -23,14 +23,31 @@ export const handler = async (event) => {
   switch (evt.type) {
     case 'checkout.session.completed': {
       const session = evt.data.object
-      // TODO: provision the clinic here. Mark it active in your store, send the
-      // welcome email (board link + printable codes), and, for the materials
-      // follow-up, record the order. session.metadata carries kind/org_name/sites.
+      const kind = session.metadata?.kind
       console.log('checkout.session.completed', {
-        kind: session.metadata?.kind,
+        kind,
         org: session.metadata?.org_name,
         email: session.customer_details?.email,
       })
+      if (kind === 'signup') {
+        // TODO: mark the clinic active and send the welcome email (board link +
+        // printable codes). Digital assets are already live.
+      }
+      if (kind === 'materials') {
+        // Fire fulfilment. In production, persist the order intent (line items +
+        // delivery address) when the Checkout session is created, keyed by
+        // session.id, then look it up here and POST it to create-fulfilment-order:
+        //
+        //   const intent = await store.get(session.id)   // { clinic, recipient, lines }
+        //   await fetch(`${process.env.URL}/.netlify/functions/create-fulfilment-order`, {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(intent),
+        //   })
+        //
+        // Prodigi prints and drop-ships; large-format + NFC items come back in
+        // the `specialist` array for manual handling.
+      }
       break
     }
     case 'invoice.paid':
