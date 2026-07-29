@@ -23,7 +23,6 @@ export type IconName =
   | 'window'
   | 'lanyard'
   | 'letter'
-  | 'wristband'
   | 'mail'
   | 'message'
   | 'monitor'
@@ -149,14 +148,6 @@ const P: Record<IconName, React.ReactNode> = {
     <>
       <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
       <path d="M4 7.5l8 5 8-5" />
-    </>
-  ),
-  wristband: (
-    <>
-      <path d="M6 9a6 3.2 0 0 0 12 0" />
-      <path d="M6 9a6 3.2 0 0 1 12 0" opacity="0" />
-      <path d="M6 9v6a6 3.2 0 0 0 12 0V9" />
-      <rect x="9" y="10.5" width="6" height="3.4" rx="0.8" />
     </>
   ),
   mail: (

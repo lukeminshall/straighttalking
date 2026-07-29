@@ -43,7 +43,6 @@ export const RESOURCES: Resource[] = [
   { id: 'vinyl', name: 'Window and door vinyl', desc: 'Entrances and glass partitions', category: 'physical', example: 'Hard-wearing decals for a glass door or window, so people can scan on the way in or while they queue outside.', icon: 'window', price: 12, qty: 0, unit: 'pack of 6' },
   { id: 'lanyard', name: 'Lanyard code cards', desc: 'Worn by staff and volunteers', category: 'physical', example: 'A code card that clips onto a staff lanyard, so anyone from the team can offer it at the bedside or in a corridor.', icon: 'lanyard', price: 11, qty: 0, unit: 'pack of 10' },
   { id: 'insert', name: 'Appointment-letter inserts', desc: 'Posted and discharge packs', category: 'physical', example: 'Slips sized to drop into an appointment letter or discharge pack, so the invite reaches people who were not asked in person.', icon: 'letter', price: 15, qty: 0, unit: 'pack of 250' },
-  { id: 'wristband', name: 'Reception wristbands', desc: 'Day-case and outpatient units', category: 'physical', example: 'A comfortable wristband printed with the code, handed out on arrival in a day-case or outpatient unit and scanned before leaving.', icon: 'wristband', price: 18, qty: 0, unit: 'pack of 100' },
 
   // Digital
   { id: 'emailsig', name: 'Email-signature banner', desc: 'Under every team email', category: 'digital', example: 'A tidy banner that drops into your team email signatures, so every message you already send quietly carries the invite.', icon: 'mail', price: 0, qty: 1 },
