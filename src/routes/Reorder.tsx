@@ -3,6 +3,7 @@ import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
 import { RESOURCES, CATEGORIES, resourcesByCategory, gbp, priceLabel } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
+import { startMaterialsCheckout } from '@/lib/checkout'
 import { reference } from '@/lib/format'
 import styles from './Reorder.module.css'
 
@@ -15,9 +16,26 @@ export function Reorder() {
   const [placed, setPlaced] = useState(false)
   const ref = useMemo(() => reference('ORD'), [])
 
+  const [paying, setPaying] = useState(false)
   const total = useMemo(() => RESOURCES.reduce((s, r) => s + r.price * (cart[r.id] || 0), 0), [cart])
   const itemCount = Object.values(cart).reduce((a, b) => a + b, 0)
   const setQty = (id: string, q: number) => setCart((c) => ({ ...c, [id]: Math.max(0, q) }))
+
+  // One-off card checkout for the printed materials; falls back to the demo
+  // confirmation when there is no payment backend configured.
+  const placeOrder = async () => {
+    const items = RESOURCES.filter((r) => (cart[r.id] || 0) > 0 && r.price > 0).map((r) => ({
+      name: r.name,
+      unitAmountPence: r.price * 100,
+      quantity: cart[r.id],
+    }))
+    setPaying(true)
+    const result = await startMaterialsCheckout({ name: ACCOUNT.org, email: '', sites: ACCOUNT.sites.length }, items)
+    if (result === 'unavailable') {
+      setPaying(false)
+      setPlaced(true)
+    }
+  }
 
   return (
     <div className={styles.root}>
@@ -103,10 +121,10 @@ export function Reorder() {
                   <span>Total</span>
                   <b>{gbp(total)}</b>
                 </div>
-                <button className={styles.place} disabled={itemCount === 0} onClick={() => setPlaced(true)}>
-                  Place order
+                <button className={styles.place} disabled={itemCount === 0 || paying} onClick={placeOrder}>
+                  {paying ? 'Opening checkout…' : 'Place order'}
                 </button>
-                <p className={styles.small}>Charged to your card on file. Ships in 2 working days.</p>
+                <p className={styles.small}>Secure card payment via Stripe. Ships in 2 working days.</p>
               </aside>
             </div>
           </>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { RESOURCES, CATEGORIES, resourcesByCategory, ANNUAL_FEE as ANNUAL, gbp } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
 import { QRCode } from '@/components/brand/QRCode'
+import { startSignupCheckout, requestInvoice } from '@/lib/checkout'
 import styles from './Setup.module.css'
 
 const STEPS = ['Organisation', 'What you capture', 'Order resources', 'Review & pay', 'Add details', 'Go live']
@@ -32,6 +33,10 @@ export function Setup() {
   const [cart, setCart] = useState<Record<string, number>>(() => Object.fromEntries(RESOURCES.map((r) => [r.id, r.qty])))
   const [details, setDetails] = useState({ display: '', reviewUrl: '', governance: 'Datix' })
   const [guideOpen, setGuideOpen] = useState(true)
+  const [payMode, setPayMode] = useState<'card' | 'invoice'>('card')
+  const [paying, setPaying] = useState(false)
+  const [invoice, setInvoice] = useState({ billingEmail: '', contactName: '', poNumber: '' })
+  const [invoiceRef, setInvoiceRef] = useState<string | null>(null)
 
   // Materials are chosen here but confirmed, priced and arranged as a follow-up
   // once the clinic is registered. Only the flat annual fee is due at signup.
@@ -47,6 +52,29 @@ export function Setup() {
 
   const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1))
   const back = () => setStep((s) => Math.max(0, s - 1))
+
+  // Card checkout redirects to Stripe when configured; otherwise (local dev, the
+  // file:// viewer, or before keys are set) it falls through to the demo go-live.
+  const payByCard = async () => {
+    setPaying(true)
+    const result = await startSignupCheckout({ name: org.name, email: org.email, sites: org.sites }, ANNUAL * 100)
+    if (result === 'unavailable') {
+      setPaying(false)
+      next()
+    }
+  }
+
+  const sendInvoiceRequest = async () => {
+    setPaying(true)
+    const res = await requestInvoice({
+      org: { name: org.name, email: org.email, sites: org.sites },
+      billingEmail: invoice.billingEmail,
+      contactName: invoice.contactName,
+      poNumber: invoice.poNumber,
+    })
+    setPaying(false)
+    setInvoiceRef(res.reference || 'INV-PREVIEW')
+  }
 
   const step0Valid = org.name.trim() && org.type && org.email.includes('@')
 
@@ -220,18 +248,72 @@ export function Setup() {
                   <b>{gbp(dueToday)}</b>
                 </div>
               </div>
-              <div className={styles.secure}>
-                <Icon name="lock" size={17} />
-                <span>Payment is handled by our PCI-compliant provider. We never see or store your card details. This preview skips the card step.</span>
-              </div>
-              <div className={styles.actions}>
-                <button className={styles.back} onClick={back}>
-                  ← Back
+              <div className={styles.payToggle} role="tablist">
+                <button role="tab" data-on={payMode === 'card'} onClick={() => setPayMode('card')}>
+                  Pay by card
                 </button>
-                <button className={styles.primary} onClick={next}>
-                  Pay &amp; continue
+                <button role="tab" data-on={payMode === 'invoice'} onClick={() => setPayMode('invoice')}>
+                  Request an invoice
                 </button>
               </div>
+
+              {payMode === 'card' ? (
+                <>
+                  <div className={styles.secure}>
+                    <Icon name="lock" size={17} />
+                    <span>Payment is handled securely by Stripe. We never see or store your card details. In this preview the card step is skipped.</span>
+                  </div>
+                  <div className={styles.actions}>
+                    <button className={styles.back} onClick={back}>
+                      ← Back
+                    </button>
+                    <button className={styles.primary} disabled={paying} onClick={payByCard}>
+                      {paying ? 'Opening checkout…' : 'Pay & continue'}
+                    </button>
+                  </div>
+                </>
+              ) : invoiceRef ? (
+                <>
+                  <div className={styles.secure}>
+                    <Icon name="check" size={17} />
+                    <span>
+                      Invoice requested, reference <b>{invoiceRef}</b>. We will email it to {invoice.billingEmail} on net terms. You can go live now: payment follows the invoice.
+                    </span>
+                  </div>
+                  <div className={styles.actions}>
+                    <button className={styles.back} onClick={() => setInvoiceRef(null)}>
+                      ← Back
+                    </button>
+                    <button className={styles.primary} onClick={next}>
+                      Continue &amp; go live
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className={styles.invoiceIntro}>For NHS Trusts and buyers on a purchase order, we raise an invoice on net terms instead of taking a card. Digital assets still go live straight away.</p>
+                  <label className={styles.lbl}>Billing email</label>
+                  <input className={styles.field} type="email" value={invoice.billingEmail} onChange={(e) => setInvoice({ ...invoice, billingEmail: e.target.value })} placeholder="accounts@trust.nhs.uk" />
+                  <div className={styles.two}>
+                    <div>
+                      <label className={styles.lbl}>Contact name</label>
+                      <input className={styles.field} value={invoice.contactName} onChange={(e) => setInvoice({ ...invoice, contactName: e.target.value })} placeholder="Optional" />
+                    </div>
+                    <div>
+                      <label className={styles.lbl}>PO number</label>
+                      <input className={styles.field} value={invoice.poNumber} onChange={(e) => setInvoice({ ...invoice, poNumber: e.target.value })} placeholder="Optional" />
+                    </div>
+                  </div>
+                  <div className={styles.actions}>
+                    <button className={styles.back} onClick={back}>
+                      ← Back
+                    </button>
+                    <button className={styles.primary} disabled={paying || !invoice.billingEmail.includes('@')} onClick={sendInvoiceRequest}>
+                      {paying ? 'Sending…' : 'Request invoice'}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

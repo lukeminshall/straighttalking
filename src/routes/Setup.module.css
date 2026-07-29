@@ -424,6 +424,37 @@
   font-size: 1.2rem;
   color: var(--st-teal);
 }
+.payToggle {
+  display: inline-flex;
+  gap: 4px;
+  margin: 20px 0 2px;
+  padding: 4px;
+  background: var(--st-off);
+  border: 1px solid var(--st-line);
+  border-radius: var(--r-md);
+}
+.payToggle button {
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--st-slate);
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 8px 16px;
+  transition: background 0.12s, color 0.12s;
+}
+.payToggle button[data-on='true'] {
+  background: var(--st-white);
+  color: var(--st-ink);
+  box-shadow: var(--sh-sm);
+}
+.invoiceIntro {
+  color: var(--st-slate);
+  font-size: 0.9rem;
+  margin: 16px 0 18px;
+  max-width: 56ch;
+}
 .secure {
   margin-top: 16px;
   background: var(--st-teal-50);

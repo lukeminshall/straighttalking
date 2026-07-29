@@ -3,6 +3,12 @@
   command = "npm run build"
   publish = "dist"
 
+# Serverless functions (Stripe checkout + webhook, invoice requests).
+# Reachable at /.netlify/functions/<name>, ahead of the SPA rewrite below.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Client-side routing: serve index.html for any path so /feedback, /app,
 # /outcomes, /board etc. resolve instead of 404ing.
 [[redirects]]
