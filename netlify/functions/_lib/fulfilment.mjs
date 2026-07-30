@@ -5,18 +5,24 @@
 //   nfc           -> Seritag (prints + encodes the tag)
 //   digital       -> generated instantly, no production
 //
-// The Prodigi SKUs below are PLACEHOLDERS: confirm each against the live Prodigi
-// product catalogue (GET /v4.0/products or the dashboard) before going live.
-// Wrong SKUs are rejected by the Orders API, so this is safe to ship as a stub.
+// SKU status (validated live against the Prodigi catalogue):
+//   CONFIRMED  poster, insert -> real Enhanced Matte Art Paper print SKUs
+//              (GLOBAL-FAP-A2 / -A5), verified via /prodigi-lookup.
+//   INTERIM    stand, card, tent, lanyard -> mapped to a small print (FAP-A5)
+//              so the full order flow validates now; swap for proper cardstock
+//              (business-card / tent-card) SKUs from the Prodigi dashboard.
+//   TODO       sticker -> needs the real kiss-cut sticker SKU (no public code;
+//              grab it from the dashboard). Rejected by the Orders API until set.
+// Confirm a SKU any time with /.netlify/functions/prodigi-lookup?sku=<SKU>.
 
 export const FULFILMENT = {
-  stand:   { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-STAND-INSERT',  sizing: 'fillPrintArea', template: 'stand' },
-  card:    { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-BUSINESS-CARD', sizing: 'fillPrintArea', template: 'card' },
-  poster:  { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-POSTER-A2',     sizing: 'fillPrintArea', template: 'poster' },
-  sticker: { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-STICKER-SHEET', sizing: 'fillPrintArea', template: 'sticker' },
-  tent:    { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-TENT-CARD',     sizing: 'fillPrintArea', template: 'tent' },
-  lanyard: { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-LANYARD-CARD',  sizing: 'fillPrintArea', template: 'lanyard' },
-  insert:  { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-LETTER-INSERT', sizing: 'fillPrintArea', template: 'insert' },
+  poster:  { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A2',             sizing: 'fillPrintArea', template: 'poster' },  // CONFIRMED A2 print
+  insert:  { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A5',             sizing: 'fillPrintArea', template: 'insert' },  // CONFIRMED A5 print
+  stand:   { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A5',             sizing: 'fillPrintArea', template: 'stand' },   // INTERIM
+  card:    { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A5',             sizing: 'fillPrintArea', template: 'card' },    // INTERIM
+  tent:    { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A5',             sizing: 'fillPrintArea', template: 'tent' },    // INTERIM
+  lanyard: { fulfilBy: 'prodigi',      sku: 'GLOBAL-FAP-A5',             sizing: 'fillPrintArea', template: 'lanyard' }, // INTERIM
+  sticker: { fulfilBy: 'prodigi',      sku: 'PRODIGI-SKU-STICKER-SHEET', sizing: 'fillPrintArea', template: 'sticker' }, // TODO: real kiss-cut SKU
   banner:  { fulfilBy: 'large-format' },
   vinyl:   { fulfilBy: 'large-format' },
   nfctag:  { fulfilBy: 'nfc' },
