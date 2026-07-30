@@ -18,7 +18,7 @@ const slugify = (s) =>
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' })
 
-  const key = process.env.PRODIGI_API_KEY
+  const key = (process.env.PRODIGI_API_KEY || '').trim()
   const base = process.env.PRODIGI_ENV === 'live' ? 'https://api.prodigi.com/v4.0' : 'https://api.sandbox.prodigi.com/v4.0'
   const publicUrl = process.env.PUBLIC_URL || process.env.URL || 'https://straighttalking.netlify.app'
 

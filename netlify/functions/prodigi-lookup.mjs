@@ -10,11 +10,25 @@ const json = (statusCode, body) => ({
 })
 
 export const handler = async (event) => {
-  const key = process.env.PRODIGI_API_KEY
+  const raw = process.env.PRODIGI_API_KEY || ''
+  const key = raw.trim()
   const base = process.env.PRODIGI_ENV === 'live' ? 'https://api.prodigi.com/v4.0' : 'https://api.sandbox.prodigi.com/v4.0'
+  const q = event.queryStringParameters || {}
+
+  // Safe diagnostic: never returns the key itself, only whether it looks sane.
+  if (q.debug) {
+    return json(200, {
+      env: process.env.PRODIGI_ENV || '(unset, defaults to sandbox)',
+      endpoint: base,
+      keyPresent: raw.length > 0,
+      keyLength: raw.length,
+      keyHadWhitespaceEdges: raw !== raw.trim(),
+    })
+  }
+
   if (!key) return json(501, { error: 'Prodigi is not configured yet' })
 
-  const sku = (event.queryStringParameters || {}).sku
+  const sku = q.sku
   if (!sku) return json(400, { error: 'sku query parameter is required' })
 
   try {
