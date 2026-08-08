@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
-import { RESOURCES, CATEGORIES, resourcesByCategory, ANNUAL_FEE as ANNUAL, gbp } from '@/data/resources'
+import { RESOURCES, CATEGORIES, resourcesByCategory, PRINT_SIZES, ANNUAL_FEE as ANNUAL, gbp } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
 import { QRCode } from '@/components/brand/QRCode'
 import { startSignupCheckout, requestInvoice } from '@/lib/checkout'
@@ -85,6 +85,8 @@ export function Setup() {
       .replace(/[^a-z0-9-]/g, '')
       .slice(0, 20) || 'your-clinic'
   const liveUrl = `straighttalking.co.uk/f/${slug}`
+  const printClinic = details.display || org.name || 'Your clinic'
+  const printBase = `/api/printable?clinic=${encodeURIComponent(printClinic)}&slug=${slug}`
 
   return (
     <div className={styles.root}>
@@ -363,7 +365,7 @@ export function Setup() {
                   </button>
                   {guideOpen && (
                     <ol className={styles.guideList}>
-                      <li>Stand your QR cards on reception and clinic desks, and put the A2 poster where patients wait.</li>
+                      <li>Hand your QR cards out at the desk, and put the A3 or A4 poster where patients wait.</li>
                       <li>On any waiting-room screen or spare display, open a browser to your board link (in the welcome email) and press full-screen (F11). It runs itself, no software to install.</li>
                       <li>For a permanent display, use the screen’s built-in browser or a cheap media stick set to the board link on boot.</li>
                       <li>Set the screen to never sleep. That’s it, it updates itself.</li>
@@ -379,8 +381,22 @@ export function Setup() {
                   </div>
                 </div>
               </div>
+
+              <div className={styles.printOwn}>
+                <h3>Print your own</h3>
+                <p>Print-ready and on-brand, each with your code. Open one, then Print or Save as PDF. Print them well, or not, whatever works for your practice.</p>
+                <div className={styles.printLinks}>
+                  {PRINT_SIZES.map((s) => (
+                    <a key={s.size} className={styles.printLink} href={`${printBase}&size=${s.size}`} target="_blank" rel="noreferrer">
+                      {s.label}
+                    </a>
+                  ))}
+                </div>
+                <p className={styles.printNote}>Prefer them done for you? <a href="/reorder">Order them printed and shipped</a>.</p>
+              </div>
+
               <div className={styles.liveNote}>
-                A welcome email is on its way to <b>{org.email || 'your admin address'}</b> with your board link, printable codes and login. Nothing else needed from us. Need more stands or cards later? <a href="/reorder">Reorder anytime</a>, your plan stays as it is.
+                A welcome email is on its way to <b>{org.email || 'your admin address'}</b> with your board link, printables and login. Nothing else needed from us. Need more posters or cards later? <a href="/reorder">Reorder anytime</a>, your plan stays as it is.
               </div>
             </div>
           )}

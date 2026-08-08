@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
-import { RESOURCES, CATEGORIES, resourcesByCategory, gbp, priceLabel } from '@/data/resources'
+import { RESOURCES, CATEGORIES, resourcesByCategory, PRINT_SIZES, gbp, priceLabel } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
 import { startMaterialsCheckout } from '@/lib/checkout'
 import { reference } from '@/lib/format'
@@ -20,6 +20,11 @@ export function Reorder() {
   const total = useMemo(() => RESOURCES.reduce((s, r) => s + r.price * (cart[r.id] || 0), 0), [cart])
   const itemCount = Object.values(cart).reduce((a, b) => a + b, 0)
   const setQty = (id: string, q: number) => setCart((c) => ({ ...c, [id]: Math.max(0, q) }))
+
+  const slug = ACCOUNT.org.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').slice(0, 20)
+  const printBase = `/api/printable?clinic=${encodeURIComponent(ACCOUNT.org)}&slug=${slug}`
+  const packItems = RESOURCES.filter((r) => r.category === 'print' && (cart[r.id] || 0) > 0).map((r) => `${r.size}:${cart[r.id]}`).join(',')
+  const packHref = `/api/print-pack?clinic=${encodeURIComponent(ACCOUNT.org)}&slug=${slug}&site=${encodeURIComponent(site)}&items=${encodeURIComponent(packItems)}`
 
   // One-off card checkout for the printed materials; falls back to the demo
   // confirmation when there is no payment backend configured.
@@ -54,9 +59,23 @@ export function Reorder() {
         {!placed ? (
           <>
             <header className={styles.head}>
-              <h1>Reorder resources</h1>
-              <p className={styles.lead}>Top up your printed codes and stands anytime. Your plan and settings stay as they are, this is just materials.</p>
+              <h1>Materials</h1>
+              <p className={styles.lead}>Print your own for free, or order them printed and shipped to a site. Your plan and settings stay as they are, this is just materials.</p>
             </header>
+
+            <div className={styles.printOwn}>
+              <div className={styles.printOwnHead}>
+                <b>Print your own</b>
+                <span>Free, print-ready, with your code. Open one, then Print or Save as PDF.</span>
+              </div>
+              <div className={styles.printLinks}>
+                {PRINT_SIZES.map((s) => (
+                  <a key={s.size} className={styles.printLink} href={`${printBase}&size=${s.size}`} target="_blank" rel="noreferrer">
+                    {s.label}
+                  </a>
+                ))}
+              </div>
+            </div>
 
             <div className={styles.layout}>
               <div className={styles.catalogue}>
@@ -153,6 +172,11 @@ export function Reorder() {
                 <b>{gbp(total)}</b>
               </div>
             </div>
+            {packItems && (
+              <a className={styles.packLink} href={packHref} target="_blank" rel="noreferrer">
+                ↓ Download print pack (for fulfilment)
+              </a>
+            )}
             <div className={styles.doneActions}>
               <Button variant="teal" onClick={() => { setPlaced(false); setCart({}) }}>
                 Order more

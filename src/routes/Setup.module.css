@@ -596,6 +596,60 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+.printOwn {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--st-line);
+}
+.printOwn h3 {
+  font-family: var(--ff-display);
+  font-weight: 560;
+  font-size: 1.2rem;
+  color: var(--st-ink);
+}
+.printOwn > p {
+  color: var(--st-slate);
+  font-size: 0.9rem;
+  margin: 6px 0 14px;
+  max-width: 60ch;
+}
+.printLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.printLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--st-teal);
+  background: var(--st-teal-50);
+  border: 1px solid var(--st-teal-100);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  transition: background 0.12s, border-color 0.12s;
+}
+.printLink::before {
+  content: '↓';
+  font-weight: 700;
+}
+.printLink:hover {
+  background: #fff;
+  border-color: var(--st-teal);
+}
+.printNote {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--st-slate);
+}
+.printNote a {
+  color: var(--st-teal);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .liveNote {
   margin-top: 22px;
   padding-top: 18px;

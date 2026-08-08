@@ -8,6 +8,17 @@
 .head { margin-bottom: 24px; }
 .head h1 { font-family: var(--ff-display); font-weight: 560; font-size: 1.9rem; letter-spacing: -0.015em; }
 .lead { color: var(--st-slate); font-size: 0.98rem; margin-top: 8px; max-width: 60ch; }
+.printOwn { background: var(--st-white); border: 1px solid var(--st-line); border-radius: var(--r-md); box-shadow: var(--sh-sm); padding: 16px 18px; margin-bottom: 22px; }
+.printOwnHead { display: flex; flex-direction: column; margin-bottom: 12px; }
+.printOwnHead b { font-family: var(--ff-display); font-weight: 560; font-size: 1.05rem; color: var(--st-ink); }
+.printOwnHead span { font-size: 0.86rem; color: var(--st-slate); margin-top: 2px; }
+.printLinks { display: flex; flex-wrap: wrap; gap: 10px; }
+.printLink { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; color: var(--st-teal); background: var(--st-teal-50); border: 1px solid var(--st-teal-100); border-radius: var(--r-md); padding: 9px 15px; transition: background 0.12s, border-color 0.12s; }
+.printLink::before { content: '↓'; font-weight: 700; }
+.printLink:hover { background: #fff; border-color: var(--st-teal); }
+.packLink { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 0.92rem; font-weight: 600; color: var(--st-teal); background: var(--st-teal-50); border: 1px solid var(--st-teal-100); border-radius: var(--r-md); padding: 11px 18px; }
+.packLink:hover { background: #fff; border-color: var(--st-teal); }
+
 .layout { display: grid; grid-template-columns: 1fr 320px; gap: 22px; align-items: start; }
 .catalogue { display: flex; flex-direction: column; gap: 10px; }
 .catGroup { display: flex; flex-direction: column; gap: 10px; }
