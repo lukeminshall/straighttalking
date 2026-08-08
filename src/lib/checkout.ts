@@ -4,8 +4,8 @@
 // viewer, or before Stripe keys are set), so callers can fall back to the demo
 // flow. No card data is handled here: Stripe Checkout is a hosted redirect.
 
-const CHECKOUT_URL = '/.netlify/functions/create-checkout'
-const INVOICE_URL = '/.netlify/functions/request-invoice'
+const CHECKOUT_URL = '/api/create-checkout'
+const INVOICE_URL = '/api/request-invoice'
 
 export interface CheckoutOrg {
   name: string
