@@ -4,7 +4,6 @@ import { Setup } from './routes/Setup'
 import { Reorder } from './routes/Reorder'
 import { PatientApp } from './routes/PatientApp'
 import { Dashboard } from './routes/Dashboard'
-import { Outcomes } from './routes/Outcomes'
 import { ClinicBoard } from './routes/ClinicBoard'
 import { Support } from './routes/Support'
 
@@ -17,7 +16,6 @@ export function App() {
       <Route path="/feedback" element={<PatientApp />} />
       <Route path="/support" element={<Support />} />
       <Route path="/app" element={<Dashboard />} />
-      <Route path="/outcomes" element={<Outcomes />} />
       <Route path="/board" element={<ClinicBoard />} />
       <Route path="/board/:siteId" element={<ClinicBoard />} />
       <Route path="/preview" element={<PreviewIndex />} />
@@ -33,7 +31,6 @@ const surfaces = [
   { to: '/feedback', label: 'Patient app', note: 'The QR destination. Rate a visit and route the feedback.' },
   { to: '/support', label: 'Peer support', note: 'Anonymous patient-to-patient support space.' },
   { to: '/app', label: 'Operator dashboard', note: 'Live capture-rate and sentiment intelligence across sites.' },
-  { to: '/outcomes', label: 'Outcomes & value', note: 'PROMs health gain, value map and PHIN-readiness.' },
   { to: '/board', label: 'Clinic board', note: 'Waiting-room display. Best viewed full-screen on 16:9.' },
 ]
 

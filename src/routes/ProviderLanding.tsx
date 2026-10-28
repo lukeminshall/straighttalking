@@ -10,8 +10,8 @@ import styles from './ProviderLanding.module.css'
 
 const SURFACES: { href: string; icon: IconName; title: string; note: string }[] = [
   { href: '/feedback', icon: 'star', title: 'The patient app', note: 'How patients leave feedback: rate a visit, say it in their words, route it.' },
+  { href: '/support', icon: 'heart', title: 'Peer support', note: 'An anonymous space where patients support one another.' },
   { href: '/app', icon: 'trend', title: 'Operator dashboard', note: 'Live capture rate and sentiment across every site.' },
-  { href: '/outcomes', icon: 'check', title: 'Outcomes & value', note: 'PROMs health gain, the value map and PHIN readiness.' },
   { href: '/board', icon: 'monitor', title: 'Waiting-room board', note: 'In-clinic display of real patient voices. Best full-screen.' },
   { href: '/setup', icon: 'qr', title: 'Set up your clinic', note: 'Self-serve onboarding: configure, order materials, go live in a day.' },
 ]
@@ -19,41 +19,41 @@ const SURFACES: { href: string; icon: IconName; title: string; note: string }[] 
 const PILLARS = [
   {
     tag: 'CAPTURE',
-    title: 'Every voice, across the whole journey',
-    body: 'One low-friction capture layer from referral to outcome. The instruments the system mandates, fired by pathway and timepoint, at capture rates the incumbents cannot touch.',
-    points: ['FFT, PROMs, PREMs, QPROMs', 'QR, SMS, kiosk, in-clinic', 'Anonymous by default, linkable on consent'],
+    title: 'Get the feedback others miss',
+    body: 'A one-tap, no-login way for patients to tell you how a visit really felt, at the point of care. Capture rates a review site cannot touch, from the people who usually stay quiet.',
+    points: ['QR, SMS and in-clinic', 'Under a minute, anonymous by default', 'A kind word, a worry, or a quiet thought'],
   },
   {
-    tag: 'COMPLY',
-    title: 'Submission-ready, not another spreadsheet',
-    body: 'Concerns routed to governance, praise to public review, and the mandated datasets prepared in the formats PHIN, NHS Digital and the registries expect. One spine instead of four tools.',
-    points: ['PHIN & NHS Digital PROMs exports', 'Datix / Radar governance routing', 'Pre and post PROM pairing'],
+    tag: 'ROUTE',
+    title: 'Every voice to the right place',
+    body: 'Concerns reach the practice team the same day, happy patients are offered a one-tap public review, and every comment is read by the people who actually run the service.',
+    points: ['Concerns flagged to the team', 'Praise to a public review in one tap', 'Themes and trends surfaced'],
   },
   {
-    tag: 'PROVE VALUE',
-    title: 'Turn outcomes into value',
-    body: 'Link the before and after to measure real health gain, case-mix adjust it, benchmark by site and consultant, and pair it with cost. The numerator of value-based care, made routine.',
-    points: ['Case-mix-adjusted health gain', 'Site and consultant benchmarking', 'The data for outcome-linked contracts'],
+    tag: 'SUPPORT',
+    title: 'A space for patients to help patients',
+    body: 'An anonymous peer-support space where people share how they are feeling, ask the questions they did not get to ask, and hear from others who have been where they are. Kind, moderated, and safe.',
+    points: ['Anonymous posts and replies', 'Supportive, moderated, never clinical', 'Urgent-help signposting built in'],
   },
 ]
 
 const AUDIENCE: { icon: IconName; title: string; body: string }[] = [
-  { icon: 'building', title: 'Independent providers', body: 'Meet the June 2026 CMA and PHIN obligations with a capture layer you own, and compete on proven quality rather than price alone.' },
-  { icon: 'network', title: 'ICBs & systems', body: 'A consistent patient-reported layer across a place, filling the gap left as Healthwatch winds down and the NHS ranks on experience.' },
-  { icon: 'trend', title: 'Value-based care leads', body: 'The outcomes numerator, pathway by pathway, ready to pair with cost for benchmarking and outcome-linked contracting.' },
+  { icon: 'building', title: 'Independent providers', body: 'Hear honest feedback across every site with a signal you own, not one scattered across review platforms, and act on concerns before they become complaints.' },
+  { icon: 'network', title: 'ICBs & systems', body: 'A consistent patient-voice layer across a place, filling the gap left as Healthwatch winds down and the NHS ranks providers on experience.' },
+  { icon: 'heart', title: 'Practice & patient teams', body: 'Concerns in front of the right people the same day, themes you can act on, and a supportive space patients actually want to use.' },
 ]
 
 const STEPS = [
-  { no: '01', title: 'Capture across the journey', body: 'Referral, diagnosis, treatment and outcome. The right instrument fires at the right moment.' },
-  { no: '02', title: 'Route and comply', body: 'Concerns to governance, praise to public, datasets prepared for PHIN and NHS Digital.' },
-  { no: '03', title: 'Measure the gain', body: 'Pre and post questionnaires linked into a real, case-mix-adjusted health gain.' },
-  { no: '04', title: 'Prove the value', body: 'Benchmark outcomes against cost, by site and consultant, ready for contracting.' },
+  { no: '01', title: 'Patient scans', body: 'A code in the clinic, on the letter, or by text. No app, no login.' },
+  { no: '02', title: 'They say it straight', body: 'A rating and a few words. A compliment, a concern, or a quiet thought.' },
+  { no: '03', title: 'It reaches the team', body: 'Concerns flag to the practice team the same day; praise lifts your public rating.' },
+  { no: '04', title: 'Patients support patients', body: 'An anonymous space where people going through the same thing help each other.' },
 ]
 
 export function ProviderLanding() {
   const cap = useCountUp(92, { start: true })
-  const vol = useCountUp(74, { start: true })
-  const hrs = useCountUp(12, { start: true })
+  const vol = useCountUp(94, { start: true })
+  const hrs = useCountUp(6, { start: true })
   const gauge = useReveal<HTMLDivElement>()
 
   return (
@@ -78,16 +78,16 @@ export function ProviderLanding() {
         </div>
         <div className={styles.heroInner}>
           <h1>
-            From referral to outcome.<br />
-            The patient voice, <span className={styles.em}>and its value</span>.
+            Hear what patients really think.<br />
+            And let them <span className={styles.em}>help each other</span>.
           </h1>
-          <p className={styles.lead}>One capture layer for the whole clinical journey. Every mandated instrument, FFT to PROMs, on a single spine, prepared for PHIN and turned into the health gain that proves value-based care.</p>
+          <p className={styles.lead}>One simple place to capture honest feedback at the point of care, get concerns to the right people fast, and give patients an anonymous space to support one another.</p>
           <div className={styles.ctaRow}>
             <Button variant="teal" size="lg" as="a" href="#book">
               Book a demo
             </Button>
-            <Button variant="ghost" size="lg" as="a" href="/outcomes">
-              See the outcomes view
+            <Button variant="ghost" size="lg" as="a" href="/feedback">
+              See the patient app
             </Button>
           </div>
           <div className={styles.stats}>
@@ -95,17 +95,17 @@ export function ProviderLanding() {
               <div className={styles.sn} ref={cap.ref as never}>
                 {cap.value}%
               </div>
-              <div className={styles.sl}>capture rate at leading sites</div>
+              <div className={styles.sl}>of patients leave feedback when asked</div>
             </div>
             <div>
               <div className={styles.sn} ref={vol.ref as never}>
                 {vol.value}%
               </div>
-              <div className={styles.sl}>PROMs pre and post pairing rate</div>
+              <div className={styles.sl}>would recommend their practice</div>
             </div>
             <div>
-              <div className={styles.sn}>+<span ref={hrs.ref as never}>{hrs.value}</span>%</div>
-              <div className={styles.sl}>health gain above national benchmark</div>
+              <div className={styles.sn}><span ref={hrs.ref as never}>{hrs.value}</span>h</div>
+              <div className={styles.sl}>median to first action on a concern</div>
             </div>
           </div>
         </div>
@@ -118,18 +118,18 @@ export function ProviderLanding() {
         </Reveal>
         <Reveal className={styles.whyGrid}>
           <p>
-            As Healthwatch winds down and local scrutiny folds into the system, the structured route for patient voice is disappearing, just as PHIN drives to full CMA compliance by June 2026 and the NHS starts ranking providers on experience. The duties are rising; the infrastructure is not.
+            As Healthwatch winds down and local scrutiny folds into the system, the structured way patients fed back on their care is disappearing, just as the NHS starts ranking providers on experience. Providers keep the duty to listen, without the infrastructure to do it.
           </p>
           <p>
-            Straight Talking fills that gap on one spine: capture across the journey, route concerns into governance, prepare the mandated datasets for PHIN and NHS Digital, and turn paired outcomes into the health gain that proves value.
+            Straight Talking fills that gap simply: capture honest feedback at the point of care, get concerns to the practice team the same day, surface the themes that matter, and give patients an anonymous space to support each other.
           </p>
         </Reveal>
       </section>
 
       <section id="what" className={styles.section}>
-        <Reveal className={styles.eyebrow}>CAPTURE. COMPLY. PROVE VALUE.</Reveal>
+        <Reveal className={styles.eyebrow}>CAPTURE. ROUTE. SUPPORT.</Reveal>
         <Reveal el="h2" className={styles.h2}>
-          One spine, the whole journey.
+          Everything the patient voice needs, in one place.
         </Reveal>
         <div className={styles.pillars}>
           {PILLARS.map((p) => (
@@ -155,7 +155,7 @@ export function ProviderLanding() {
               Capture rate is the whole game.
             </Reveal>
             <Reveal className={styles.gaugeCopy}>
-              Most tools hear from the loudest few percent, which is fatal for outcomes: an unrepresentative PROM cannot be defended or benchmarked. Straight Talking lifts the share who actually respond, so the health-gain data underneath value-based care holds up.
+              Most feedback tools hear from the loudest few percent, so what you see isn’t what most patients feel. Straight Talking lifts the share who actually respond, so the picture you act on is the real one, representative enough to trust.
             </Reveal>
           </div>
           <div className={`${styles.gauge} reveal`} ref={gauge}>
@@ -191,7 +191,7 @@ export function ProviderLanding() {
       <section id="how" className={styles.section}>
         <Reveal className={styles.eyebrow}>HOW IT WORKS</Reveal>
         <Reveal el="h2" className={styles.h2}>
-          From referral to proven value.
+          From a scan to a supported patient.
         </Reveal>
         <div className={styles.steps}>
           {STEPS.map((s) => (
@@ -242,7 +242,7 @@ export function ProviderLanding() {
       <section id="see" className={styles.section}>
         <Reveal className={styles.eyebrow}>SEE IT WORKING</Reveal>
         <Reveal el="h2" className={styles.h2}>
-          Every surface, on one spine.
+          Every surface, in one place.
         </Reveal>
         <Reveal className={styles.matIntro}>
           The same product from every angle. Open any of them, they run on live sample data.
@@ -265,14 +265,14 @@ export function ProviderLanding() {
 
       <section id="book" className={styles.cta}>
         <Reveal className={styles.ctaInner}>
-          <h2>The patient voice, from front door to outcome.</h2>
-          <p>See a live walkthrough on your own pathways and instruments. No slides, just the platform.</p>
+          <h2>Give every patient a straight line to you.</h2>
+          <p>See a live walkthrough on your own sites and services. No slides, just the platform.</p>
           <div className={styles.ctaRow} style={{ justifyContent: 'center' }}>
             <Button variant="teal" size="lg" as="a" href="mailto:hello@straighttalking.co.uk">
               Book a demo
             </Button>
-            <Button variant="ghost" size="lg" as="a" href="/outcomes">
-              See the outcomes view
+            <Button variant="ghost" size="lg" as="a" href="/support">
+              See peer support
             </Button>
           </div>
         </Reveal>
@@ -283,14 +283,14 @@ export function ProviderLanding() {
           <div className={styles.footBrand}>
             <Logo variant="colour" height={28} />
             <p>Say it straight. We're listening.</p>
-            <p className={styles.footMuted}>The patient-reported spine of the clinical journey.</p>
+            <p className={styles.footMuted}>The independent home for the patient voice.</p>
           </div>
           <div className={styles.footCols}>
             <div>
               <h5>Platform</h5>
               <a href="#how">How it works</a>
-              <a href="/outcomes">Outcomes &amp; value</a>
-              <a href="#what">Instruments</a>
+              <a href="/feedback">Patient app</a>
+              <a href="/support">Peer support</a>
               <a href="/board">Clinic board</a>
               <a href="#book">Pricing</a>
             </div>

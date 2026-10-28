@@ -4,18 +4,16 @@ import { Setup } from './routes/Setup'
 import { Reorder } from './routes/Reorder'
 import { PatientApp } from './routes/PatientApp'
 import { Dashboard } from './routes/Dashboard'
-import { Outcomes } from './routes/Outcomes'
 import { ClinicBoard } from './routes/ClinicBoard'
 import { DemoProvider, useDemo } from './demo/DemoContext'
 
-type Surface = 'landing' | 'setup' | 'patient' | 'dashboard' | 'outcomes' | 'board' | 'reorder'
+type Surface = 'landing' | 'setup' | 'patient' | 'dashboard' | 'board' | 'reorder'
 
 const TABS: { key: Surface; label: string }[] = [
   { key: 'landing', label: 'Landing' },
   { key: 'setup', label: 'Set up' },
   { key: 'patient', label: 'Patient' },
   { key: 'dashboard', label: 'Dashboard' },
-  { key: 'outcomes', label: 'Outcomes' },
   { key: 'board', label: 'Board' },
   { key: 'reorder', label: 'Reorder' },
 ]
@@ -26,7 +24,6 @@ const HREF_MAP: Record<string, Surface> = {
   '/reorder': 'reorder',
   '/feedback': 'patient',
   '/app': 'dashboard',
-  '/outcomes': 'outcomes',
   '/board': 'board',
 }
 
@@ -82,7 +79,6 @@ function Shell() {
         {surface === 'setup' && <Setup />}
         {surface === 'patient' && <PatientApp />}
         {surface === 'dashboard' && <Dashboard />}
-        {surface === 'outcomes' && <Outcomes />}
         {surface === 'board' && <ClinicBoard />}
         {surface === 'reorder' && <Reorder />}
       </div>
