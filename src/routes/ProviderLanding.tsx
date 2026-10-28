@@ -1,4 +1,5 @@
 import { Logo } from '@/components/brand/Logo'
+import { ProductBy } from '@/components/brand/ProductBy'
 import { Button } from '@/components/ui/Button'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import { Sparkline } from '@/components/charts/Sparkline'
@@ -321,6 +322,7 @@ export function ProviderLanding() {
         </div>
         <div className={styles.footBase}>
           <span>© 2026 Straight Talking. An independent patient feedback platform.</span>
+          <ProductBy />
           <span>No patient identifiable data is held against feedback.</span>
         </div>
       </footer>

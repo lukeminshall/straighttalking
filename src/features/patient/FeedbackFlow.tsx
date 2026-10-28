@@ -12,62 +12,22 @@ interface FeedbackFlowProps {
   onClose: () => void
 }
 
-const RATING_WORDS = ['', 'We\u2019re sorry to hear that', 'Not the visit we want for you', 'A mixed one, thank you for telling us', 'Glad it went well', 'Wonderful, thank you']
+const RATING_WORDS = ['', 'We’re sorry to hear that', 'Not the visit we want for you', 'A mixed one, thank you for telling us', 'Glad it went well', 'Wonderful, thank you']
 
-// Patient self-declares what they were seen for; this maps to the instrument.
+// Plain context for the visit. Not a clinical pathway — just helps us read the
+// feedback and point you at the right people.
 interface Pathway {
   id: string
   label: string
   icon: string
-  instrument: string | null
-  prom: string | null
 }
 const PATHWAYS: Pathway[] = [
-  { id: 'scan', label: 'A scan, X-ray or test', icon: '\u25ce', instrument: 'EQ-5D-5L', prom: 'eq5d' },
-  { id: 'knee', label: 'Knee surgery or replacement', icon: '\u25b3', instrument: 'Oxford Knee Score', prom: 'knee' },
-  { id: 'hip', label: 'Hip surgery or replacement', icon: '\u25b3', instrument: 'Oxford Hip Score', prom: 'hip' },
-  { id: 'cataract', label: 'Cataract or eye surgery', icon: '\u25c9', instrument: 'Cat-PROM5', prom: 'cataract' },
-  { id: 'other', label: 'Another operation or procedure', icon: '\u271a', instrument: 'EQ-5D-5L', prom: 'eq5d' },
-  { id: 'appt', label: 'Just an appointment or consultation', icon: '\u2637', instrument: null, prom: null },
+  { id: 'scan', label: 'A scan, X-ray or test', icon: '◎' },
+  { id: 'procedure', label: 'An operation or procedure', icon: '✚' },
+  { id: 'appt', label: 'An appointment or consultation', icon: '☷' },
+  { id: 'other', label: 'Something else', icon: '∙' },
 ]
 const PATHWAY_BY_ID = Object.fromEntries(PATHWAYS.map((p) => [p.id, p]))
-
-interface PromItem { q: string; opts: string[] }
-const PROM_SETS: Record<string, { instrument: string; items: PromItem[] }> = {
-  eq5d: {
-    instrument: 'EQ-5D-5L',
-    items: [
-      { q: 'Getting around and walking about', opts: ['No problems', 'Slight', 'Moderate', 'Severe', 'Unable'] },
-      { q: 'Washing and dressing yourself', opts: ['No problems', 'Slight', 'Moderate', 'Severe', 'Unable'] },
-      { q: 'Your usual activities (work, chores, leisure)', opts: ['No problems', 'Slight', 'Moderate', 'Severe', 'Unable'] },
-      { q: 'Pain or discomfort today', opts: ['None', 'Slight', 'Moderate', 'Severe', 'Extreme'] },
-    ],
-  },
-  knee: {
-    instrument: 'Oxford Knee Score',
-    items: [
-      { q: 'Pain in your knee over the last 4 weeks', opts: ['None', 'Mild', 'Moderate', 'Severe', 'Unbearable'] },
-      { q: 'How far you can walk before the pain is bad', opts: ['No limit', 'A while', 'Moderate', 'Short', 'Barely'] },
-      { q: 'Stairs, kneeling and getting up from a chair', opts: ['No trouble', 'A little', 'Moderate', 'A lot', 'Impossible'] },
-    ],
-  },
-  hip: {
-    instrument: 'Oxford Hip Score',
-    items: [
-      { q: 'Pain in your hip over the last 4 weeks', opts: ['None', 'Mild', 'Moderate', 'Severe', 'Unbearable'] },
-      { q: 'How far you can walk before the pain is bad', opts: ['No limit', 'A while', 'Moderate', 'Short', 'Barely'] },
-      { q: 'Dressing, socks and getting in and out of a car', opts: ['No trouble', 'A little', 'Moderate', 'A lot', 'Impossible'] },
-    ],
-  },
-  cataract: {
-    instrument: 'Cat-PROM5',
-    items: [
-      { q: 'How clear your vision feels day to day', opts: ['Very clear', 'Fairly', 'Mixed', 'Blurry', 'Very blurry'] },
-      { q: 'Trouble with glare or bright lights', opts: ['None', 'A little', 'Moderate', 'A lot', 'Severe'] },
-      { q: 'Reading, recognising faces, getting about', opts: ['No trouble', 'A little', 'Moderate', 'A lot', 'Can\u2019t manage'] },
-    ],
-  },
-}
 
 export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
   const demo = useDemo()
@@ -76,21 +36,18 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
   const [pathway, setPathway] = useState('')
   const [starsValue, setStarsValue] = useState(0)
   const [scale, setScale] = useState(0)
-  const [promAns, setPromAns] = useState<Record<number, number>>({})
   const [intent, setIntent] = useState<Intent>(null)
   const [text, setText] = useState('')
   const [wantReply, setWantReply] = useState(false)
-  const [wantFollowup, setWantFollowup] = useState(false)
-  const [followContact, setFollowContact] = useState('')
+  const [wantShare, setWantShare] = useState(true)
   const [email, setEmail] = useState('')
+  const [sending, setSending] = useState(false)
+  const [errMsg, setErrMsg] = useState('')
   const ref = useMemo(() => reference(), [])
 
   const pathObj = pathway ? PATHWAY_BY_ID[pathway] : undefined
-  const promKey = pathObj?.prom ?? null
-  const hasProm = !!promKey
-  const promSet = promKey ? PROM_SETS[promKey] : undefined
 
-  const steps = ['start', 'rating', ...(hasProm ? ['prom'] : []), 'intent', 'text', 'send', 'done']
+  const steps = ['start', 'rating', 'intent', 'text', 'send', 'done']
   const idx = Math.max(0, steps.indexOf(stepKey))
 
   useEffect(() => {
@@ -122,38 +79,51 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
     setPathway('')
     setStarsValue(0)
     setScale(0)
-    setPromAns({})
     setIntent(null)
     setText('')
     setWantReply(false)
-    setWantFollowup(false)
-    setFollowContact('')
+    setWantShare(true)
     setEmail('')
+    setSending(false)
+    setErrMsg('')
   }
 
   const next = () => setStepKey(steps[Math.min(steps.length - 1, idx + 1)])
   const back = () => setStepKey(steps[Math.max(0, idx - 1)])
 
-  const choosePathway = (id: string) => {
-    setPathway(id)
-    setPromAns({})
-  }
-
-  const send = () => {
-    demo.submit({
-      intent: intent ?? 'comment',
-      rating: starsValue,
-      text,
-      service: pathObj ? pathObj.label : '',
-      site: site ? site.split(' ')[0] : '',
-    })
-    setStepKey('done')
+  const send = async () => {
+    if (sending) return
+    setSending(true)
+    setErrMsg('')
+    const chosenIntent: Exclude<Intent, null> = intent ?? 'comment'
+    const service = pathObj ? pathObj.label : ''
+    try {
+      // In production this persists via the live provider; in the demo shell it
+      // drives the on-screen counters. FeedbackFlow itself stays backend-agnostic
+      // so the static single-file viewer never bundles the backend client.
+      await demo.submit({
+        intent: chosenIntent,
+        rating: starsValue,
+        text,
+        service,
+        site: site ? site.split(' ')[0] : '',
+        reference: ref,
+        recommend: scale,
+        shareConsent: wantShare && positive,
+        replyEmail: wantReply ? email : undefined,
+      })
+      setStepKey('done')
+    } catch {
+      setErrMsg('Sorry, that didn’t send. Please check your connection and try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   const intentCopy: Record<Exclude<Intent, null>, { title: string; hint: string }> = {
     compliment: { title: 'Who or what made the difference?', hint: 'Name a team member if you like, we love passing praise on.' },
-    concern: { title: 'Tell us what went wrong', hint: 'As much detail as you can. This reaches the care team today.' },
-    comment: { title: "What\u2019s on your mind?", hint: 'Any thought at all. No category needed.' },
+    concern: { title: 'Tell us what could have been better', hint: 'As much detail as you can. This goes straight to the practice team.' },
+    comment: { title: "What’s on your mind?", hint: 'Any thought at all. No category needed.' },
   }
 
   const pick = (kind: Exclude<Intent, null>) => {
@@ -181,10 +151,10 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
           {stepKey === 'start' && (
             <div className={styles.screen}>
               <h2>What were you seen for?</h2>
-              <p className={styles.hint}>This picks the right questions for you. Most people just need a quick word, and that is all this takes.</p>
+              <p className={styles.hint}>Just so we can read your feedback in context. Most people only need a quick word, and that is all this takes.</p>
               <div className={styles.seen}>
                 {PATHWAYS.map((p) => (
-                  <button key={p.id} className={styles.seenOpt} data-on={pathway === p.id} onClick={() => choosePathway(p.id)}>
+                  <button key={p.id} className={styles.seenOpt} data-on={pathway === p.id} onClick={() => setPathway(p.id)}>
                     <span className={styles.seenIc} aria-hidden="true">{p.icon}</span>
                     <span>{p.label}</span>
                     {pathway === p.id && <span className={styles.seenTick}>✓</span>}
@@ -237,41 +207,7 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                 <button className={styles.back} onClick={back}>
                   ← Back
                 </button>
-                <button className={styles.primary} onClick={next}>
-                  Continue
-                </button>
-              </div>
-            </div>
-          )}
-
-          {stepKey === 'prom' && promSet && (
-            <div className={styles.screen}>
-              <h2>A few quick questions</h2>
-              <p className={styles.hint}>
-                Because you came in for {pathObj?.label.toLowerCase()}, these track how you are now. We ask the same again after treatment, so we can see if it truly helped.
-              </p>
-              <div className={styles.promList}>
-                {promSet.items.map((it, qi) => (
-                  <div key={qi} className={styles.promItem}>
-                    <div className={styles.promQ}>{it.q}</div>
-                    <div className={styles.promOpts}>
-                      {it.opts.map((o, oi) => (
-                        <button key={oi} className={styles.promOpt} data-on={promAns[qi] === oi} onClick={() => setPromAns((a) => ({ ...a, [qi]: oi }))}>
-                          {o}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.instrNote}>
-                Shown in plain words. In use this is the licensed <b>{promSet.instrument}</b>, the outcome measure PHIN and the NHS recognise.
-              </div>
-              <div className={styles.actions}>
-                <button className={styles.back} onClick={back}>
-                  ← Back
-                </button>
-                <button className={styles.primary} onClick={next}>
+                <button className={styles.primary} disabled={!starsValue} onClick={next}>
                   Continue
                 </button>
               </div>
@@ -283,19 +219,19 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
               <h2>{positive ? 'Sounds like a good visit.' : negative ? 'Thank you for being honest.' : 'What would you like to do?'}</h2>
               <p className={styles.hint}>
                 {positive
-                  ? 'Would you share it publicly? It helps someone anxious feel safe choosing us.'
+                  ? 'Would you share it? A few kind words help the next anxious patient feel safe choosing this practice.'
                   : negative
-                    ? 'We\u2019d like to put this right. Raising a concern sends it to the care team today.'
+                    ? 'We’d like to put this right. Telling the team sends it to them today.'
                     : 'Pick whatever fits. You can say one thing or all three.'}
               </p>
               {positive && (
                 <div className={styles.nudge}>
-                  <b>One tap to Google.</b> We'll pre-fill your rating so a public review takes seconds. Totally optional.
+                  <b>One tap to share.</b> We'll pre-fill your rating so leaving a public review takes seconds. Totally optional.
                 </div>
               )}
               {negative && (
                 <div className={`${styles.nudge} ${styles.care}`}>
-                  <b>We're listening.</b> A concern is logged as a governance record so nothing gets lost.
+                  <b>We're listening.</b> What you tell us goes straight to the practice team so nothing gets lost.
                 </div>
               )}
               <button className={`${styles.door} ${styles.compliment}`} onClick={() => pick('compliment')}>
@@ -308,8 +244,8 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
               <button className={`${styles.door} ${styles.concern}`} onClick={() => pick('concern')}>
                 <span className={styles.doorIc}><Icon name="alert" size={20} /></span>
                 <span>
-                  <b>Raise a concern or complaint</b>
-                  <em>Something wasn't right. This goes to the care team today.</em>
+                  <b>Raise a concern</b>
+                  <em>Something wasn't right. This goes to the practice team today.</em>
                 </span>
               </button>
               <button className={`${styles.door} ${styles.comment}`} onClick={() => pick('comment')}>
@@ -336,7 +272,7 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                 <div className={styles.privacy}>
                   <span className={styles.privIc}><Icon name="doc" size={18} /></span>
                   <div>
-                    <b>Logged for governance.</b> Recorded in Datix / Radar so it is reviewed and tracked properly.
+                    <b>Goes to the practice team.</b> Flagged for someone to read and follow up, so it isn’t lost in a form.
                   </div>
                 </div>
               )}
@@ -368,26 +304,18 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                   <b>No personal details are attached.</b> You are saved as a private reference and your service only.
                 </div>
               </div>
-              {hasProm && (
+              {intent === 'compliment' && (
                 <label className={`${styles.consent} ${styles.followup}`}>
-                  <input type="checkbox" checked={wantFollowup} onChange={(e) => setWantFollowup(e.target.checked)} />
+                  <input type="checkbox" checked={wantShare} onChange={(e) => setWantShare(e.target.checked)} />
                   <span>
-                    <b>Yes, check how I'm getting on after treatment.</b> We'll send one short follow-up in about six months. It is what turns today's answers into a real measure of whether treatment helped, and it is the only way to complete your result.
+                    <b>Happy for this to be shared anonymously.</b> We may show it on our waiting-room board or invite you to post it as a public review. Never with any detail that identifies you.
                   </span>
                 </label>
-              )}
-              {hasProm && wantFollowup && (
-                <>
-                  <label className={styles.lbl} style={{ marginTop: 4 }}>
-                    Mobile or email for the follow-up
-                  </label>
-                  <input className={styles.field} value={followContact} onChange={(e) => setFollowContact(e.target.value)} placeholder="07… or you@example.com" />
-                </>
               )}
               <label className={styles.consent}>
                 <input type="checkbox" checked={wantReply} onChange={(e) => setWantReply(e.target.checked)} />
                 <span>
-                  <b>I'd like a reply.</b> Add an email if you want us to come back to you about a concern. Stored separately from your feedback, never alongside it.
+                  <b>I'd like a reply.</b> Add an email if you want us to come back to you. Stored separately from your feedback, never alongside it.
                 </span>
               </label>
               {wantReply && (
@@ -398,12 +326,13 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                   <input className={styles.field} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
                 </>
               )}
+              {errMsg && <div className={`${styles.nudge} ${styles.care}`} style={{ marginTop: 12 }}>{errMsg}</div>}
               <div className={styles.actions}>
-                <button className={styles.back} onClick={back}>
+                <button className={styles.back} onClick={back} disabled={sending}>
                   ← Back
                 </button>
-                <button className={styles.primary} onClick={send}>
-                  Send my voice
+                <button className={styles.primary} onClick={send} disabled={sending}>
+                  {sending ? 'Sending…' : 'Send my voice'}
                 </button>
               </div>
             </div>
@@ -412,10 +341,10 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
           {stepKey === 'done' && (
             <div className={styles.screen}>
               <div className={styles.doneMark}>✓</div>
-              <h2>{doneConcern ? 'We\u2019ve heard you, and we\u2019re on it.' : 'Your voice has been heard.'}</h2>
+              <h2>{doneConcern ? 'We’ve heard you, and we’re on it.' : 'Your voice has been heard.'}</h2>
               <p className={styles.hint}>
                 {doneConcern
-                  ? 'Your concern is logged with the care team. Keep your reference if you\u2019d like to follow it up.'
+                  ? 'Your concern is with the practice team. Keep your reference if you’d like to follow it up.'
                   : 'Thank you for taking the time. It genuinely helps the next person through the door.'}
               </p>
               <div className={styles.ref}>
@@ -423,10 +352,8 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                 <b>{ref}</b>
               </div>
               <div className={styles.routed}>
-                {doneConcern && <Row>Logged as a governance record in Datix / Radar</Row>}
-                {positive && <Row>Ready to post to Google Reviews in one tap</Row>}
-                {hasProm && wantFollowup && <Row>We'll send one short {promSet?.instrument} follow-up after your treatment, so today becomes a measured result</Row>}
-                {hasProm && !wantFollowup && <Row>Your baseline {promSet?.instrument} is saved, add a follow-up anytime to complete it</Row>}
+                {doneConcern && <Row>Flagged to the practice team to read and follow up</Row>}
+                {positive && wantShare && <Row>Ready to share as a public review in one tap</Row>}
                 {wantReply && <Row>We'll reply to the email you gave, held separately from your feedback</Row>}
                 <Row>Saved anonymously against {pathObj ? pathObj.label.toLowerCase() : 'your visit'}, no personal details attached</Row>
               </div>

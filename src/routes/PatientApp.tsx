@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
+import { ProductBy } from '@/components/brand/ProductBy'
 import { Button } from '@/components/ui/Button'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import { FeedbackFlow } from '@/features/patient/FeedbackFlow'
@@ -83,6 +84,9 @@ export function PatientApp() {
             </Button>
             <Button variant="ghost" size="lg" onClick={() => document.getElementById('how')?.scrollIntoView()}>
               {t.how}
+            </Button>
+            <Button variant="ghost" size="lg" as="a" href="/support">
+              Talk to other patients
             </Button>
           </div>
           <div className={styles.counter}>
@@ -179,6 +183,7 @@ export function PatientApp() {
       <footer className={styles.footer}>
         <Logo height={26} />
         <span>No patient identifiable data is held against feedback.</span>
+        <ProductBy />
       </footer>
 
       <FeedbackFlow open={flowOpen} onClose={() => setFlowOpen(false)} />

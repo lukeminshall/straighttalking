@@ -8,6 +8,11 @@ export interface SubmitPayload {
   text: string
   service: string
   site: string
+  // Extra fields used by the live backend provider; ignored by the demo shell.
+  reference?: string
+  recommend?: number
+  shareConsent?: boolean
+  replyEmail?: string
 }
 
 export interface DemoEvent {
@@ -17,7 +22,7 @@ export interface DemoEvent {
   praise: boolean
 }
 
-interface DemoState {
+export interface DemoState {
   feed: FeedbackItem[]
   capturedCount: number
   googlePushed: number
@@ -26,13 +31,13 @@ interface DemoState {
   lastEvent: DemoEvent | null
   /** true inside the interactive demo shell, false in the production app */
   live: boolean
-  submit: (payload: SubmitPayload) => void
+  submit: (payload: SubmitPayload) => void | Promise<void>
   clearEvent: () => void
 }
 
 const SEED = { captured: 3418, google: 312, concerns: 37 }
 
-const STATIC: DemoState = {
+export const STATIC: DemoState = {
   feed: feedbackStream,
   capturedCount: SEED.captured,
   googlePushed: SEED.google,
@@ -44,7 +49,7 @@ const STATIC: DemoState = {
   clearEvent: () => {},
 }
 
-const DemoContext = createContext<DemoState>(STATIC)
+export const DemoContext = createContext<DemoState>(STATIC)
 
 export const useDemo = () => useContext(DemoContext)
 
