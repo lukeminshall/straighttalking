@@ -24,6 +24,7 @@ export default async function handler(req, res) {
   const stripe = new Stripe(key)
   const origin = req.headers.origin || process.env.PUBLIC_URL || 'https://straighttalking.co.uk'
   const org = payload.org || {}
+  const slug = typeof payload.slug === 'string' ? payload.slug : ''
   const mode = payload.mode === 'materials' ? 'materials' : 'signup'
 
   try {
@@ -45,8 +46,8 @@ export default async function handler(req, res) {
             },
           },
         ],
-        subscription_data: { metadata: { org_name: org.name || '', sites: String(org.sites || 1) } },
-        metadata: { kind: 'signup', org_name: org.name || '', sites: String(org.sites || 1) },
+        subscription_data: { metadata: { org_name: org.name || '', sites: String(org.sites || 1), slug } },
+        metadata: { kind: 'signup', org_name: org.name || '', sites: String(org.sites || 1), slug },
         success_url: `${origin}/setup?status=paid&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/setup?status=cancelled`,
       })
@@ -63,7 +64,7 @@ export default async function handler(req, res) {
         mode: 'payment',
         customer_email: org.email || undefined,
         line_items,
-        metadata: { kind: 'materials', org_name: org.name || '' },
+        metadata: { kind: 'materials', org_name: org.name || '', slug },
         success_url: `${origin}/reorder?status=paid&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/reorder?status=cancelled`,
       })

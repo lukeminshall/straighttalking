@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
-import { youSaidWeDid } from '@/data/board'
+import { youSaidWeDid, type BoardVoice } from '@/data/board'
 import { useCountUp } from '@/lib/hooks/useCountUp'
 import { useDemo } from '@/demo/DemoContext'
 import { stars } from '@/lib/format'
@@ -10,9 +10,23 @@ import styles from './ClinicBoard.module.css'
 const VOICE_MS = 5000
 const YSD_MS = 6000
 
-export function ClinicBoard() {
+export interface BoardProps {
+  /** Live published voices; falls back to the demo seed when empty/absent. */
+  voices?: BoardVoice[]
+  /** Live you-said-we-did pairs; falls back to the demo seed when empty. */
+  saidDid?: { said: string; did: string }[]
+  clinicName?: string
+  town?: string
+  formUrl?: string
+}
+
+export function ClinicBoard({ voices: liveVoices, saidDid, clinicName, town, formUrl }: BoardProps = {}) {
   const demo = useDemo()
-  const voices = demo.boardVoices
+  const voices = liveVoices && liveVoices.length ? liveVoices : demo.boardVoices
+  const ysdList = saidDid && saidDid.length ? saidDid : youSaidWeDid
+  const name = clinicName || 'Sussex Imaging'
+  const place = town || 'Haywards Heath'
+  const formTarget = formUrl || 'https://straighttalking.co.uk/f/sussex-imaging'
   const [voiceIndex, setVoiceIndex] = useState(0)
   const [ysdIndex, setYsdIndex] = useState(0)
   const [shared, setShared] = useState(1204)
@@ -23,7 +37,7 @@ export function ClinicBoard() {
 
   useEffect(() => {
     const v = window.setInterval(() => setVoiceIndex((i) => i + 1), VOICE_MS)
-    const y = window.setInterval(() => setYsdIndex((i) => (i + 1) % youSaidWeDid.length), YSD_MS)
+    const y = window.setInterval(() => setYsdIndex((i) => (i + 1) % ysdList.length), YSD_MS)
     const tick = window.setInterval(() => {
       if (Math.random() < 0.6) setShared((s) => s + 1)
     }, 7000)
@@ -37,15 +51,15 @@ export function ClinicBoard() {
   }, [])
 
   const voice = voices[voiceIndex % voices.length]
-  const ysd = youSaidWeDid[ysdIndex]
+  const ysd = ysdList[ysdIndex % ysdList.length]
 
   return (
     <div className={styles.board}>
       <header className={styles.top}>
         <Logo height={34} />
         <div className={styles.clinic}>
-          <div className={styles.name}>Sussex Imaging</div>
-          <div className={styles.sub}>Haywards Heath · what our patients are telling us</div>
+          <div className={styles.name}>{name}</div>
+          <div className={styles.sub}>{place} · what our patients are telling us</div>
         </div>
         <div className={styles.cqc}>
           <span className={styles.rate}>Good</span>
@@ -122,7 +136,7 @@ export function ClinicBoard() {
               Share your thoughts. Help the <em>next patient</em> on their journey.
             </h3>
             <div className={styles.qrBox}>
-              <QRCode value="https://straighttalking.co.uk/f/sussex-imaging" size={200} dark="#14312d" title="Scan to share your visit" />
+              <QRCode value={formTarget} size={200} dark="#14312d" title="Scan to share your visit" />
             </div>
             <div className={styles.how}>Scan with your phone camera</div>
             <div className={styles.chips}>

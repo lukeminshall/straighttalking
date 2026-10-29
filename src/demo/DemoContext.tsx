@@ -56,7 +56,7 @@ export const useDemo = () => useContext(DemoContext)
 const routeFor = (intent: SubmitPayload['intent']): Route =>
   intent === 'compliment' ? 'google' : intent === 'concern' ? 'datix' : 'note'
 
-const labelFor = (route: Route) => (route === 'google' ? 'Google' : route === 'datix' ? 'Datix / Radar' : 'the site')
+const labelFor = (route: Route) => (route === 'google' ? 'Google' : route === 'datix' ? 'the practice team' : 'the site')
 
 const fallbackQuote = (intent: SubmitPayload['intent']) =>
   intent === 'concern'
@@ -79,7 +79,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     const rating = p.rating || (p.intent === 'concern' ? 2 : 5)
     const item: FeedbackItem = {
       route,
-      routeLabel: route === 'datix' ? 'Datix' : route === 'google' ? 'Google' : 'Comment',
+      routeLabel: route === 'datix' ? 'To the team' : route === 'google' ? 'Google' : 'Comment',
       quote,
       location: `${p.site || 'Sussex'} · ${p.service || 'Visit'}`,
       rating,

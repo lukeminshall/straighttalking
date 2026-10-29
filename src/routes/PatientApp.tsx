@@ -27,7 +27,7 @@ const STEPS: { no: string; icon: IconName; title: string; body: string }[] = [
 
 const ROUTES = [
   { cls: 'pos', tag: 'PRAISE', title: 'Offered to Google', body: 'Happy visits get a one-tap public review, so the next anxious patient feels safe choosing us. Always your choice.' },
-  { cls: 'con', tag: 'CONCERN', title: 'Logged in Datix / Radar', body: 'Concerns become governance records the clinical team reviews and acts on. Tracked, never buried.' },
+  { cls: 'con', tag: 'CONCERN', title: 'Sent to the practice team', body: 'Concerns go straight to the people who run the service, to read and act on. Tracked, never buried.' },
   { cls: 'com', tag: 'ANY THOUGHT', title: 'Read by the site', body: 'Every comment is read by the people who run the service. Small things become better visits.' },
 ]
 

@@ -41,13 +41,13 @@ async function toCheckout(body: unknown): Promise<CheckoutResult> {
 }
 
 /** Annual-fee subscription checkout for first-time signup. */
-export function startSignupCheckout(org: CheckoutOrg, annualFeePence: number): Promise<CheckoutResult> {
-  return toCheckout({ mode: 'signup', org, annualFeePence })
+export function startSignupCheckout(org: CheckoutOrg, annualFeePence: number, slug?: string): Promise<CheckoutResult> {
+  return toCheckout({ mode: 'signup', org, annualFeePence, slug })
 }
 
 /** One-off materials checkout for the post-registration reorder flow. */
-export function startMaterialsCheckout(org: CheckoutOrg, items: MaterialLine[]): Promise<CheckoutResult> {
-  return toCheckout({ mode: 'materials', org, items })
+export function startMaterialsCheckout(org: CheckoutOrg, items: MaterialLine[], slug?: string): Promise<CheckoutResult> {
+  return toCheckout({ mode: 'materials', org, items, slug })
 }
 
 export interface InvoiceRequest {

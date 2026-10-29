@@ -1,11 +1,29 @@
 import { Link, Route, Routes } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import { ProviderLanding } from './routes/ProviderLanding'
 import { Setup } from './routes/Setup'
 import { Reorder } from './routes/Reorder'
 import { PatientApp } from './routes/PatientApp'
 import { Dashboard } from './routes/Dashboard'
-import { ClinicBoard } from './routes/ClinicBoard'
+import { Moderate } from './routes/Moderate'
+import { BoardLive } from './routes/BoardLive'
 import { Support } from './routes/Support'
+import { AuthProvider, Protected } from './app/AuthProvider'
+import { OperatorProvider } from './app/OperatorProvider'
+
+// Operator surfaces (/app, /app/moderate) are gated by Clerk (when configured)
+// and fed live, authenticated data by OperatorProvider. Public surfaces stay
+// outside this wrapper so the landing, patient app, board and support space
+// never require sign-in.
+function Operator({ children }: { children: ReactNode }) {
+  return (
+    <AuthProvider>
+      <Protected>
+        <OperatorProvider>{children}</OperatorProvider>
+      </Protected>
+    </AuthProvider>
+  )
+}
 
 export function App() {
   return (
@@ -15,9 +33,10 @@ export function App() {
       <Route path="/reorder" element={<Reorder />} />
       <Route path="/feedback" element={<PatientApp />} />
       <Route path="/support" element={<Support />} />
-      <Route path="/app" element={<Dashboard />} />
-      <Route path="/board" element={<ClinicBoard />} />
-      <Route path="/board/:siteId" element={<ClinicBoard />} />
+      <Route path="/board" element={<BoardLive />} />
+      <Route path="/board/:siteId" element={<BoardLive />} />
+      <Route path="/app" element={<Operator><Dashboard /></Operator>} />
+      <Route path="/app/moderate" element={<Operator><Moderate /></Operator>} />
       <Route path="/preview" element={<PreviewIndex />} />
       <Route path="*" element={<ProviderLanding />} />
     </Routes>
@@ -31,6 +50,7 @@ const surfaces = [
   { to: '/feedback', label: 'Patient app', note: 'The QR destination. Rate a visit and route the feedback.' },
   { to: '/support', label: 'Peer support', note: 'Anonymous patient-to-patient support space.' },
   { to: '/app', label: 'Operator dashboard', note: 'Live capture-rate and sentiment intelligence across sites.' },
+  { to: '/app/moderate', label: 'Moderation', note: 'Flagged feedback + reported peer content. Operator sign-in.' },
   { to: '/board', label: 'Clinic board', note: 'Waiting-room display. Best viewed full-screen on 16:9.' },
 ]
 

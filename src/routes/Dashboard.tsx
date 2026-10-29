@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
 import { SiteMap } from '@/components/map/SiteMap'
 import { Sparkline } from '@/components/charts/Sparkline'
@@ -9,13 +10,19 @@ import { funnel, drivers, captureTrend, networkAverage, feedbackStream, type Fee
 import { themes } from '@/data/board'
 import { useCountUp } from '@/lib/hooks/useCountUp'
 import { useDemo } from '@/demo/DemoContext'
+import { useOperator } from '@/app/operator-context'
 import { gb, stars } from '@/lib/format'
 import styles from './Dashboard.module.css'
+
+const INTENT_ROUTE: Record<string, string> = { compliment: 'google', concern: 'datix', comment: 'note' }
+const INTENT_LABEL: Record<string, string> = { compliment: 'Shared', concern: 'To the team', comment: 'Logged' }
 
 const STREAM_MS = 5200
 
 export function Dashboard() {
   const demo = useDemo()
+  const op = useOperator()
+  const live = op.live && !!op.summary
   const [mounted, setMounted] = useState(false)
   const [autoStream, setAutoStream] = useState<FeedbackItem[]>(feedbackStream.slice(0, 5))
   const cap = useCountUp(92.4, { decimals: 1, duration: 1800, start: true })
@@ -35,7 +42,15 @@ export function Dashboard() {
     }
   }, [demo.live])
 
-  const stream = demo.live ? demo.feed.slice(0, 6) : autoStream
+  const liveStream: FeedbackItem[] = op.recent.slice(0, 6).map((r) => ({
+    route: (INTENT_ROUTE[r.intent] ?? 'note') as FeedbackItem['route'],
+    routeLabel: INTENT_LABEL[r.intent] ?? 'Logged',
+    quote: r.body || (r.intent === 'concern' ? 'A concern was raised about this visit.' : 'Feedback shared.'),
+    location: `${r.service || 'Visit'}`,
+    rating: r.rating ?? (r.intent === 'concern' ? 2 : 5),
+    you: false,
+  }))
+  const stream = live ? liveStream : demo.live ? demo.feed.slice(0, 6) : autoStream
   const ranked = [...sites].sort((a, b) => b.captureRate - a.captureRate)
   const eligible = funnel[0].value
 
@@ -52,9 +67,18 @@ export function Dashboard() {
               <button>7d</button>
               <button>QTD</button>
             </div>
+            <Link to="/app/moderate" className={styles.modLink}>
+              Moderation
+              {live && op.summary && op.summary.open_flags > 0 && <span className={styles.modBadge}>{op.summary.open_flags}</span>}
+            </Link>
             <span className={styles.live}>
-              <span className={styles.beat} /> Live
+              <span className={styles.beat} /> {live ? 'Live' : 'Sample'}
             </span>
+            {op.live && op.signedIn && (
+              <button className={styles.signout} onClick={() => void op.signOut()}>
+                Sign out
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -63,10 +87,14 @@ export function Dashboard() {
         <header className={styles.head}>
           <div>
             <h1>Feedback intelligence</h1>
-            <div className={styles.sub}>All sites · Medical Imaging Partnership</div>
+            <div className={styles.sub}>{live ? 'Your practice · live feedback' : 'All sites · illustrative sample'}</div>
           </div>
           <div className={styles.upd}>
-            Last sync <span className={styles.mono}>08 Jul 2026 · 09:14</span>
+            {live ? (
+              <>Updates as feedback arrives{op.loading ? ' · refreshing…' : ''}</>
+            ) : (
+              <>Last sync <span className={styles.mono}>08 Jul 2026 · 09:14</span></>
+            )}
           </div>
         </header>
 
@@ -88,8 +116,8 @@ export function Dashboard() {
           <div className={`${styles.glass} ${styles.stat}`}>
             <div>
               <div className={styles.statLab}>Feedback captured</div>
-              <div className={`${styles.statV} ${styles.mono}`} key={demo.capturedCount} data-live={demo.live}>
-                {gb(demo.capturedCount)}
+              <div className={`${styles.statV} ${styles.mono}`} key={live ? op.summary!.captured : demo.capturedCount} data-live={demo.live || live}>
+                {gb(live ? op.summary!.captured : demo.capturedCount)}
               </div>
             </div>
             <div>
@@ -104,13 +132,28 @@ export function Dashboard() {
 
           <div className={`${styles.glass} ${styles.stat}`}>
             <div>
-              <div className={styles.statLab}>Concerns resolved</div>
+              <div className={styles.statLab}>{live ? 'Open concerns' : 'Concerns resolved'}</div>
               <div className={styles.statV}>
-                34<small>/{demo.concernsLogged}</small>
+                {live ? (
+                  <>
+                    {op.summary!.open_flags}
+                    <small>/{op.summary!.concerns}</small>
+                  </>
+                ) : (
+                  <>
+                    34<small>/{demo.concernsLogged}</small>
+                  </>
+                )}
               </div>
             </div>
             <div className={styles.foot}>
-              92% closed · median 6.2h to first action · routed to Datix / Radar
+              {live ? (
+                <>
+                  Flagged for the practice team · <Link to="/app/moderate" className={styles.inlineLink}>review in Moderation</Link>
+                </>
+              ) : (
+                <>92% closed · median 6.2h to first action · routed to the practice team</>
+              )}
             </div>
           </div>
         </section>
@@ -293,6 +336,9 @@ export function Dashboard() {
               </span>
             </h3>
             <p className={styles.cs}>Anonymised · reference and service only · routed automatically</p>
+            {live && stream.length === 0 && (
+              <div className={styles.empty}>No feedback yet. It appears here the moment a patient submits.</div>
+            )}
             <div className={styles.stream}>
               {stream.map((item, i) => (
                 <div className={styles.item} key={`${item.location}-${i}`} data-you={item.you}>
@@ -315,7 +361,9 @@ export function Dashboard() {
         </section>
 
         <footer className={styles.footer}>
-          Straight Talking Intelligence · figures shown are illustrative sample data · no patient identifiable data is held against feedback
+          {live
+            ? 'Straight Talking Intelligence · the capture funnel, trend, site map and theme charts above are illustrative · headline counts and the live feed are your real data · no patient identifiable data is held against feedback'
+            : 'Straight Talking Intelligence · figures shown are illustrative sample data · no patient identifiable data is held against feedback'}
         </footer>
       </div>
     </div>

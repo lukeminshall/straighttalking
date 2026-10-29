@@ -11,27 +11,25 @@ const STEPS = ['Organisation', 'What you capture', 'Order resources', 'Review & 
 
 const SETTINGS = ['NHS Trust', 'NHS Foundation Trust', 'Private hospital', 'Independent clinic', 'Diagnostic centre', 'ICB / system']
 
-interface InstrumentOpt {
+interface FeedbackOpt {
   id: string
   name: string
   note: string
-  kind: 'PREM' | 'PROM' | 'Comment'
+  kind: 'Core' | 'Question' | 'Open'
 }
-const INSTRUMENTS: InstrumentOpt[] = [
-  { id: 'fft', name: 'Friends & Family Test', note: 'Experience at every touchpoint', kind: 'PREM' },
-  { id: 'comment', name: 'Open comments', note: 'Anything on the patient’s mind', kind: 'Comment' },
-  { id: 'eq5d', name: 'EQ-5D-5L', note: 'Generic outcome, any pathway', kind: 'PROM' },
-  { id: 'hip', name: 'Oxford Hip Score', note: 'Hip replacement, pre + post', kind: 'PROM' },
-  { id: 'knee', name: 'Oxford Knee Score', note: 'Knee replacement, pre + post', kind: 'PROM' },
-  { id: 'cat', name: 'Cat-PROM5', note: 'Cataract, pre + post', kind: 'PROM' },
+const FEEDBACK_TYPES: FeedbackOpt[] = [
+  { id: 'rating', name: 'Star rating & recommend', note: 'A quick score and a would-you-recommend', kind: 'Core' },
+  { id: 'fft', name: 'Friends & Family Test', note: 'The standard experience question', kind: 'Question' },
+  { id: 'comment', name: 'Open comments', note: 'Anything on the patient’s mind', kind: 'Open' },
+  { id: 'service', name: 'Service & visit tags', note: 'Tag feedback by service so it routes to the right team', kind: 'Question' },
 ]
 
 export function Setup() {
   const [step, setStep] = useState(0)
   const [org, setOrg] = useState({ name: '', type: '', sites: 1, email: '' })
-  const [chosen, setChosen] = useState<Set<string>>(new Set(['fft', 'comment']))
+  const [chosen, setChosen] = useState<Set<string>>(new Set(['rating', 'fft', 'comment']))
   const [cart, setCart] = useState<Record<string, number>>(() => Object.fromEntries(RESOURCES.map((r) => [r.id, r.qty])))
-  const [details, setDetails] = useState({ display: '', reviewUrl: '', governance: 'Datix' })
+  const [details, setDetails] = useState({ display: '', reviewUrl: '', governance: 'The practice team' })
   const [guideOpen, setGuideOpen] = useState(true)
   const [payMode, setPayMode] = useState<'card' | 'invoice'>('card')
   const [paying, setPaying] = useState(false)
@@ -57,7 +55,7 @@ export function Setup() {
   // file:// viewer, or before keys are set) it falls through to the demo go-live.
   const payByCard = async () => {
     setPaying(true)
-    const result = await startSignupCheckout({ name: org.name, email: org.email, sites: org.sites }, ANNUAL * 100)
+    const result = await startSignupCheckout({ name: org.name, email: org.email, sites: org.sites }, ANNUAL * 100, slug)
     if (result === 'unavailable') {
       setPaying(false)
       next()
@@ -149,10 +147,10 @@ export function Setup() {
 
           {step === 1 && (
             <div className={styles.screen}>
-              <h2>Choose what you capture</h2>
-              <p className={styles.lead}>Pick the instruments that fit your pathways. You can add more later, and each one fires at the right point automatically.</p>
+              <h2>Choose what patients are asked</h2>
+              <p className={styles.lead}>Pick what the feedback form asks. Keep it short, or add more. You can change this any time.</p>
               <div className={styles.opts}>
-                {INSTRUMENTS.map((ins) => (
+                {FEEDBACK_TYPES.map((ins) => (
                   <button key={ins.id} className={styles.opt} data-on={chosen.has(ins.id)} onClick={() => toggle(ins.id)}>
                     <span className={styles.optCheck}>{chosen.has(ins.id) ? '✓' : ''}</span>
                     <span>
@@ -327,11 +325,11 @@ export function Setup() {
               <input className={styles.field} value={details.display} onChange={(e) => setDetails({ ...details, display: e.target.value })} placeholder={org.name || 'Your clinic'} />
               <label className={styles.lbl}>Google review link (for praise)</label>
               <input className={styles.field} value={details.reviewUrl} onChange={(e) => setDetails({ ...details, reviewUrl: e.target.value })} placeholder="https://g.page/r/…" />
-              <label className={styles.lbl}>Route concerns to</label>
+              <label className={styles.lbl}>Who sees concerns</label>
               <select className={styles.field} value={details.governance} onChange={(e) => setDetails({ ...details, governance: e.target.value })}>
-                <option>Datix</option>
-                <option>Radar Healthcare</option>
-                <option>Email to governance lead</option>
+                <option>The practice team</option>
+                <option>A named inbox</option>
+                <option>Our practice manager</option>
               </select>
               <div className={styles.actions}>
                 <button className={styles.back} onClick={back}>

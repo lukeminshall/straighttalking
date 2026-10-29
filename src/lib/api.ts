@@ -1,4 +1,7 @@
 import { supabase } from './supabase'
+import type { FeedbackRow, FeedbackSummary, Voice, SaidDid, SupportPost, SupportReply } from './types'
+
+export type { FeedbackRow, FeedbackSummary, Voice, SaidDid, SupportPost, SupportReply } from './types'
 
 // Default practice for the single-tenant demo / first customer. A per-site
 // deployment overrides this via VITE_DEFAULT_PRACTICE or a /f/:slug route.
@@ -40,21 +43,6 @@ export async function submitFeedback(i: SubmitFeedbackInput): Promise<string> {
   return data as string
 }
 
-export interface FeedbackRow {
-  id: string
-  created_at: string
-  reference: string
-  rating: number | null
-  recommend: number | null
-  service: string | null
-  intent: 'compliment' | 'concern' | 'comment'
-  body: string | null
-  flagged: boolean
-  status: 'new' | 'seen' | 'resolved'
-  share_consent: boolean
-  published: boolean
-}
-
 /** Operator view: recent feedback rows (requires an authenticated session). */
 export async function listFeedback(limit = 50): Promise<FeedbackRow[]> {
   if (!supabase) return []
@@ -65,16 +53,6 @@ export async function listFeedback(limit = 50): Promise<FeedbackRow[]> {
     .limit(limit)
   if (error) throw error
   return (data ?? []) as FeedbackRow[]
-}
-
-export interface FeedbackSummary {
-  captured: number
-  compliments: number
-  concerns: number
-  comments: number
-  open_flags: number
-  avg_rating: number | null
-  recommend_pct: number | null
 }
 
 export async function getFeedbackSummary(practiceSlug?: string): Promise<FeedbackSummary | null> {
@@ -90,13 +68,6 @@ export async function getFeedbackSummary(practiceSlug?: string): Promise<Feedbac
 // ---------------------------------------------------------------------------
 // Board content (published voices + you-said-we-did)
 // ---------------------------------------------------------------------------
-export interface Voice {
-  quote: string
-  rating: number
-  service: string
-  when: string
-}
-
 export async function getPublishedVoices(practiceSlug = DEFAULT_PRACTICE): Promise<Voice[]> {
   if (!supabase) return []
   const { data, error } = await supabase
@@ -117,11 +88,6 @@ export async function getPublishedVoices(practiceSlug = DEFAULT_PRACTICE): Promi
   }))
 }
 
-export interface SaidDid {
-  said: string
-  did: string
-}
-
 export async function getYouSaidWeDid(practiceSlug = DEFAULT_PRACTICE): Promise<SaidDid[]> {
   if (!supabase) return []
   const { data, error } = await supabase
@@ -137,25 +103,6 @@ export async function getYouSaidWeDid(practiceSlug = DEFAULT_PRACTICE): Promise<
 // ---------------------------------------------------------------------------
 // Peer-to-peer support
 // ---------------------------------------------------------------------------
-export interface SupportPost {
-  id: string
-  alias: string
-  topic: string | null
-  body: string
-  hearts: number
-  created_at: string
-  reply_count?: number
-}
-
-export interface SupportReply {
-  id: string
-  post_id: string
-  alias: string
-  body: string
-  hearts: number
-  created_at: string
-}
-
 export async function listSupportPosts(practiceSlug = DEFAULT_PRACTICE): Promise<SupportPost[]> {
   if (!supabase) return []
   const { data, error } = await supabase

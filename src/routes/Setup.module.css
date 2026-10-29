@@ -238,10 +238,10 @@
   background: var(--st-teal-100);
   color: var(--st-teal-600);
 }
-.optKind[data-kind='PREM'] {
+.optKind[data-kind='Core'] {
   background: #e7f4f1;
 }
-.optKind[data-kind='Comment'] {
+.optKind[data-kind='Open'] {
   background: #eef2f1;
   color: var(--st-slate);
 }

@@ -1,0 +1,235 @@
+.root {
+  min-height: 100vh;
+  background: var(--st-off);
+  color: var(--st-ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--st-off) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--st-line);
+}
+.barInner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.barRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.back {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--st-teal-600);
+  text-decoration: none;
+}
+.back:hover {
+  text-decoration: underline;
+}
+.signout {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-slate);
+  background: none;
+  border: 1px solid var(--st-line);
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+.head h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 560;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.lead {
+  color: var(--st-slate);
+  max-width: 60ch;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+.notice {
+  margin-top: 20px;
+  background: var(--st-teal-50);
+  border: 1px solid var(--st-teal-100);
+  color: var(--st-teal-600);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+}
+
+.section {
+  margin-top: 34px;
+}
+.secHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.secHead h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 560;
+  font-size: 1.25rem;
+  margin: 0;
+}
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--st-white);
+  border: 1px solid var(--st-line);
+  color: var(--st-slate);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.empty {
+  color: var(--st-slate);
+  background: var(--st-white);
+  border: 1px dashed var(--st-line);
+  border-radius: 12px;
+  padding: 20px 18px;
+  font-size: 0.9rem;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+.card {
+  background: var(--st-white);
+  border: 1px solid var(--st-line);
+  border-left: 3px solid var(--st-line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 2px rgba(20, 49, 45, 0.04);
+}
+.card[data-tone='concern'] {
+  border-left-color: var(--st-coral);
+}
+.card[data-tone='praise'] {
+  border-left-color: var(--st-teal-500);
+}
+
+.cardTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--st-slate);
+}
+.tag {
+  text-transform: capitalize;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #eef2f1;
+  color: var(--st-ink);
+}
+.tag[data-tone='concern'] {
+  background: var(--st-coral-soft, #fbe4dd);
+  color: #8a3c28;
+}
+.tag[data-tone='praise'] {
+  background: var(--st-teal-50);
+  color: var(--st-teal-600);
+}
+.rating {
+  color: var(--st-amber, #e0a13c);
+  letter-spacing: 1px;
+}
+.svc {
+  font-weight: 600;
+  color: var(--st-ink);
+}
+.ref {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.74rem;
+}
+.reason {
+  font-style: italic;
+}
+.time {
+  margin-left: auto;
+  font-size: 0.75rem;
+}
+
+.body {
+  margin: 12px 0 14px;
+  line-height: 1.55;
+  color: var(--st-ink);
+}
+.removed {
+  color: var(--st-coral);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.primary,
+.danger,
+.ghost {
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.primary {
+  background: var(--st-teal);
+  color: #fff;
+}
+.primary:hover {
+  background: var(--st-teal-600);
+}
+.danger {
+  background: var(--st-coral);
+  color: #fff;
+}
+.danger:hover {
+  filter: brightness(0.95);
+}
+.ghost {
+  background: var(--st-white);
+  border-color: var(--st-line);
+  color: var(--st-slate);
+}
+.ghost:hover {
+  color: var(--st-ink);
+}
+.primary:disabled,
+.danger:disabled,
+.ghost:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
