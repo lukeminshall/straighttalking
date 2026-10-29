@@ -38,14 +38,16 @@ function OperatorProviderLive({ children }: { children: ReactNode }) {
   const [flagged, setFlagged] = useState<FeedbackRow[]>([])
   const [reports, setReports] = useState<ReportRow[]>([])
 
-  // A Supabase client whose Authorization header carries the Clerk session token
-  // (role=authenticated via the "supabase" JWT template), so RLS admits operators.
+  // A Supabase client whose Authorization header carries the Clerk session token.
+  // Uses Clerk's native Supabase integration (not the deprecated JWT template):
+  // the plain session token already carries role=authenticated once the Supabase
+  // integration is enabled in the Clerk dashboard, so Supabase RLS admits operators.
   const db = useMemo<SupabaseClient | null>(() => {
     if (!SUPABASE_URL || !SUPABASE_ANON) return null
     return createClient(SUPABASE_URL, SUPABASE_ANON, {
-      // Clerk session token with role=authenticated (the "supabase" JWT template).
-      // Empty string when signed out, so RLS simply treats the request as anon.
-      accessToken: async () => (await getToken({ template: 'supabase' })) ?? '',
+      // Native integration: no template. Empty string when signed out, so RLS
+      // simply treats the request as anon.
+      accessToken: async () => (await getToken()) ?? '',
     })
   }, [getToken])
 
