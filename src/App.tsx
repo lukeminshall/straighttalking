@@ -8,6 +8,7 @@ import { Dashboard } from './routes/Dashboard'
 import { Moderate } from './routes/Moderate'
 import { BoardLive } from './routes/BoardLive'
 import { Support } from './routes/Support'
+import { Privacy } from './routes/Privacy'
 import { AuthProvider, Protected } from './app/AuthProvider'
 import { OperatorProvider } from './app/OperatorProvider'
 
@@ -33,6 +34,7 @@ export function App() {
       <Route path="/reorder" element={<Reorder />} />
       <Route path="/feedback" element={<PatientApp />} />
       <Route path="/support" element={<Support />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="/board" element={<BoardLive />} />
       <Route path="/board/:siteId" element={<BoardLive />} />
       <Route path="/app" element={<Operator><Dashboard /></Operator>} />
@@ -52,6 +54,7 @@ const surfaces = [
   { to: '/app', label: 'Operator dashboard', note: 'Live capture-rate and sentiment intelligence across sites.' },
   { to: '/app/moderate', label: 'Moderation', note: 'Flagged feedback + reported peer content. Operator sign-in.' },
   { to: '/board', label: 'Clinic board', note: 'Waiting-room display. Best viewed full-screen on 16:9.' },
+  { to: '/privacy', label: 'Privacy notice', note: 'Public fair-processing notice. Cookie preferences reopener.' },
 ]
 
 function PreviewIndex() {

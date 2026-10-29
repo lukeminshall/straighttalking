@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import { Sparkline } from '@/components/charts/Sparkline'
 import { CATEGORIES, resourcesByCategory, priceLabel } from '@/data/resources'
+import { reopenConsent } from '@/lib/consent'
 import { useReveal } from '@/lib/hooks/useReveal'
 import { useCountUp } from '@/lib/hooks/useCountUp'
 import styles from './ProviderLanding.module.css'
@@ -303,19 +304,21 @@ export function ProviderLanding() {
             </div>
             <div>
               <h5>Data &amp; security</h5>
-              <a href="#data">How we manage data</a>
-              <a href="#data">What data we hold</a>
-              <a href="#data">UK GDPR &amp; lawful basis</a>
-              <a href="#data">Where data is stored</a>
-              <a href="#data">Sub-processors</a>
-              <a href="#data">Security &amp; certifications</a>
+              <a href="/privacy">How we manage data</a>
+              <a href="/privacy">What data we hold</a>
+              <a href="/privacy">UK GDPR &amp; lawful basis</a>
+              <a href="/privacy">Where data is stored</a>
+              <a href="/privacy">Sub-processors</a>
+              <a href="/privacy">Security &amp; certifications</a>
             </div>
             <div>
               <h5>Company</h5>
               <a href="#book">Contact</a>
-              <a href="#data">Privacy policy</a>
+              <a href="/privacy">Privacy policy</a>
               <a href="#data">Terms of service</a>
-              <a href="#data">Cookie preferences</a>
+              <button type="button" className={styles.linkBtn} onClick={() => reopenConsent()}>
+                Cookie preferences
+              </button>
               <a href="#data">Accessibility</a>
             </div>
           </div>

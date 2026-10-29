@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
 import { LiveProvider } from './app/LiveProvider'
+import { CookieConsent } from './app/CookieConsent'
 import './styles/global.css'
 
 createRoot(document.getElementById('root')!).render(
@@ -10,6 +11,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <LiveProvider>
         <App />
+        <CookieConsent />
       </LiveProvider>
     </BrowserRouter>
   </StrictMode>,

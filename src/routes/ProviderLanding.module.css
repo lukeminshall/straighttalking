@@ -102,6 +102,8 @@
 .footCols h5 { font-family: var(--ff-mono); font-weight: 400; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: var(--st-teal); margin-bottom: 14px; }
 .footCols a { display: block; font-size: 0.85rem; color: var(--st-slate); padding: 5px 0; transition: color 0.15s; }
 .footCols a:hover { color: var(--st-teal); }
+.linkBtn { display: block; font-family: inherit; font-size: 0.85rem; color: var(--st-slate); background: none; border: none; padding: 5px 0; text-align: left; cursor: pointer; transition: color 0.15s; }
+.linkBtn:hover { color: var(--st-teal); }
 .footBase { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--st-line); font-size: 0.8rem; color: #7c9a94; }
 
 @media (max-width: 900px) { .pillars, .audience { grid-template-columns: 1fr; } .whyGrid, .gaugeInner { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr 1fr; } .matGrid, .surfaces { grid-template-columns: 1fr; } }
