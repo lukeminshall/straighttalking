@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   const key = (process.env.PRODIGI_API_KEY || '').trim()
   const base = process.env.PRODIGI_ENV === 'live' ? 'https://api.prodigi.com/v4.0' : 'https://api.sandbox.prodigi.com/v4.0'
-  const publicUrl = process.env.PUBLIC_URL || `https://${req.headers.host || 'straighttalking.co.uk'}`
+  const publicUrl = process.env.PUBLIC_URL || `https://${req.headers.host || 'straighttalking.org.uk'}`
 
   let p
   try {

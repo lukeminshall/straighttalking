@@ -51,6 +51,9 @@ export const RESOURCES: Resource[] = [
 
 export const ANNUAL_FEE = 200
 
+/** Free trial before the first annual charge (must match TRIAL_DAYS in api/create-checkout.js). */
+export const TRIAL_DAYS = 30
+
 export const gbp = (n: number) => `£${n.toFixed(2)}`
 
 /** Price label that reads "Included" for the zero-cost digital assets. */

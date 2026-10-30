@@ -6,7 +6,6 @@ import { Sparkline } from '@/components/charts/Sparkline'
 import { CATEGORIES, resourcesByCategory, priceLabel } from '@/data/resources'
 import { reopenConsent } from '@/lib/consent'
 import { useReveal } from '@/lib/hooks/useReveal'
-import { useCountUp } from '@/lib/hooks/useCountUp'
 import styles from './ProviderLanding.module.css'
 
 const SURFACES: { href: string; icon: IconName; title: string; note: string }[] = [
@@ -52,9 +51,6 @@ const STEPS = [
 ]
 
 export function ProviderLanding() {
-  const cap = useCountUp(92, { start: true })
-  const vol = useCountUp(94, { start: true })
-  const hrs = useCountUp(6, { start: true })
   const gauge = useReveal<HTMLDivElement>()
 
   return (
@@ -93,20 +89,16 @@ export function ProviderLanding() {
           </div>
           <div className={styles.stats}>
             <div>
-              <div className={styles.sn} ref={cap.ref as never}>
-                {cap.value}%
-              </div>
-              <div className={styles.sl}>of patients leave feedback when asked</div>
+              <div className={styles.sn}>&lt;1 min</div>
+              <div className={styles.sl}>for a patient to leave feedback, no app or login</div>
             </div>
             <div>
-              <div className={styles.sn} ref={vol.ref as never}>
-                {vol.value}%
-              </div>
-              <div className={styles.sl}>would recommend their practice</div>
+              <div className={styles.sn}>Same day</div>
+              <div className={styles.sl}>concerns reach the practice team</div>
             </div>
             <div>
-              <div className={styles.sn}><span ref={hrs.ref as never}>{hrs.value}</span>h</div>
-              <div className={styles.sl}>median to first action on a concern</div>
+              <div className={styles.sn}>£200</div>
+              <div className={styles.sl}>a year, whole practice. First month free</div>
             </div>
           </div>
         </div>
@@ -151,7 +143,7 @@ export function ProviderLanding() {
       <section className={styles.gaugeBand}>
         <div className={styles.gaugeInner}>
           <div>
-            <Reveal className={styles.eyebrow}>THE NUMBER THAT MOVES EVERYTHING</Reveal>
+            <Reveal className={styles.eyebrow}>WHY CAPTURE MATTERS</Reveal>
             <Reveal el="h2" className={styles.h2Left}>
               Capture rate is the whole game.
             </Reveal>
@@ -160,14 +152,11 @@ export function ProviderLanding() {
             </Reveal>
           </div>
           <div className={`${styles.gauge} reveal`} ref={gauge}>
-            <div className={styles.gaugeNum}>92%</div>
-            <div className={styles.gaugeLab}>of eligible visits leave feedback</div>
-            <div className={styles.gaugeTrack}>
-              <span style={{ width: '92%' }} />
-            </div>
+            <div className={styles.gaugeNum}>Ask everyone</div>
+            <div className={styles.gaugeLab}>QR in the room, link in the text, card at the desk</div>
             <div className={styles.gaugeCompare}>
-              <span>Typical review capture ~4%</span>
-              <span>Straight Talking 92%</span>
+              <span>Review sites hear the few who go looking</span>
+              <span>Straight Talking asks every patient</span>
             </div>
           </div>
         </div>
@@ -236,7 +225,7 @@ export function ProviderLanding() {
           ))}
         </div>
         <Reveal className={styles.matFoot}>
-          A flat £200 a year covers the platform. Materials are the only extras, and you top them up whenever you need to.
+          Your first month is free, then a flat £200 a year covers the platform. Materials are the only extras, and you top them up whenever you need to.
         </Reveal>
       </section>
 
@@ -267,9 +256,9 @@ export function ProviderLanding() {
       <section id="book" className={styles.cta}>
         <Reveal className={styles.ctaInner}>
           <h2>Give every patient a straight line to you.</h2>
-          <p>See a live walkthrough on your own sites and services. No slides, just the platform.</p>
+          <p>See a live walkthrough on your own sites and services. No slides, just the platform. Your first month is free.</p>
           <div className={styles.ctaRow} style={{ justifyContent: 'center' }}>
-            <Button variant="teal" size="lg" as="a" href="mailto:hello@straighttalking.co.uk">
+            <Button variant="teal" size="lg" as="a" href="mailto:hello@minshallgroup.com?subject=Straight%20Talking%20demo">
               Book a demo
             </Button>
             <Button variant="ghost" size="lg" as="a" href="/support">

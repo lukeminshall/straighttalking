@@ -33,6 +33,7 @@ export function App() {
       <Route path="/setup" element={<Setup />} />
       <Route path="/reorder" element={<Reorder />} />
       <Route path="/feedback" element={<PatientApp />} />
+      <Route path="/f/:slug" element={<PatientApp />} />
       <Route path="/support" element={<Support />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/board" element={<BoardLive />} />

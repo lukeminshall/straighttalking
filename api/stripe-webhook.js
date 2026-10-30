@@ -44,9 +44,21 @@ export default async function handler(req, res) {
 
       if (kind === 'signup') {
         // Activate the practice (by slug when supplied) and record the order.
+        // With the free first month the session completes at £0: the practice
+        // starts on 'trial' and moves to 'active' when the first invoice is paid.
+        const onTrial = !session.amount_total
+        const status = onTrial ? 'trial' : 'active'
         let practiceId = await practiceIdBySlug(db, meta.slug)
         if (practiceId) {
-          await db.from('practices').update({ status: 'active' }).eq('id', practiceId)
+          await db.from('practices').update({ status }).eq('id', practiceId)
+        } else if (meta.slug) {
+          // New sign-up: create the practice so its QR link (/f/<slug>) records feedback.
+          const { data: created } = await db
+            .from('practices')
+            .insert({ slug: meta.slug, name: meta.org_name || meta.slug, status })
+            .select('id')
+            .maybeSingle()
+          practiceId = created ? created.id : null
         }
         await db.from('orders').insert({
           practice_id: practiceId,
@@ -56,7 +68,7 @@ export default async function handler(req, res) {
           currency: session.currency || 'gbp',
           stripe_session_id: session.id,
           stripe_subscription_id: typeof session.subscription === 'string' ? session.subscription : null,
-          status: 'paid',
+          status: onTrial ? 'pending' : 'paid',
         })
         // Welcome email (board link + printables) is sent by the mailer wiring;
         // digital assets are already live the moment the practice is active.
