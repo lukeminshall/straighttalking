@@ -54,7 +54,7 @@ export function Privacy() {
           </p>
           <p>
             Questions, or want to exercise a right below? Contact your provider’s practice team, or
-            email us at <a href="mailto:privacy@straighttalking.health">privacy@straighttalking.health</a>.
+            email us at <a href="mailto:privacy@straighttalking.org.uk">privacy@straighttalking.org.uk</a>.
           </p>
         </section>
 
@@ -174,7 +174,7 @@ export function Privacy() {
           <p>
             Because feedback is anonymous, we may be unable to find a specific entry without extra
             detail from you — which is the point of keeping it unidentifiable. To exercise a right,
-            contact your provider or <a href="mailto:privacy@straighttalking.health">privacy@straighttalking.health</a>.
+            contact your provider or <a href="mailto:privacy@straighttalking.org.uk">privacy@straighttalking.org.uk</a>.
           </p>
           <p>
             You can also complain to the Information Commissioner’s Office (ICO) at{' '}

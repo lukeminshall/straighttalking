@@ -304,7 +304,7 @@ export function FeedbackFlow({ open, onClose }: FeedbackFlowProps) {
                   <b>No personal details are attached.</b> You are saved as a private reference and your service only.
                 </div>
               </div>
-              {intent === 'compliment' && (
+              {positive && (
                 <label className={`${styles.consent} ${styles.followup}`}>
                   <input type="checkbox" checked={wantShare} onChange={(e) => setWantShare(e.target.checked)} />
                   <span>

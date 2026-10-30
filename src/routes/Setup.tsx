@@ -82,7 +82,7 @@ export function Setup() {
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
       .slice(0, 20) || 'your-clinic'
-  const liveUrl = `straighttalking.co.uk/f/${slug}`
+  const liveUrl = `straighttalking.org.uk/f/${slug}`
   const printClinic = details.display || org.name || 'Your clinic'
   const printBase = `/api/printable?clinic=${encodeURIComponent(printClinic)}&slug=${slug}`
 

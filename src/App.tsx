@@ -33,10 +33,21 @@ export function App() {
       <Route path="/setup" element={<Setup />} />
       <Route path="/reorder" element={<Reorder />} />
       <Route path="/feedback" element={<PatientApp />} />
+      {/* QR / short-link destination printed on materials: straighttalking.org.uk/f/{slug}.
+          Lands patients on the feedback app. (Per-practice attribution by :slug is not
+          wired yet — submissions currently use the default practice.) */}
+      <Route path="/f" element={<PatientApp />} />
+      <Route path="/f/:slug" element={<PatientApp />} />
       <Route path="/support" element={<Support />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/board" element={<BoardLive />} />
       <Route path="/board/:siteId" element={<BoardLive />} />
+      {/* Public, no-auth demo of the clinician dashboard. Renders the sample
+          view (useOperator defaults to the static sample state), so prospects
+          can explore it without a sign-in. The real operator console is /app.
+          (Note: /demo is the standalone single-file viewer asset, so this
+          lives at /dashboard.) */}
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/app" element={<Operator><Dashboard /></Operator>} />
       <Route path="/app/moderate" element={<Operator><Moderate /></Operator>} />
       <Route path="/preview" element={<PreviewIndex />} />
@@ -51,7 +62,8 @@ const surfaces = [
   { to: '/reorder', label: 'Reorder resources', note: 'Admin resupply of printed codes and stands, plan unchanged.' },
   { to: '/feedback', label: 'Patient app', note: 'The QR destination. Rate a visit and route the feedback.' },
   { to: '/support', label: 'Peer support', note: 'Anonymous patient-to-patient support space.' },
-  { to: '/app', label: 'Operator dashboard', note: 'Live capture-rate and sentiment intelligence across sites.' },
+  { to: '/dashboard', label: 'Clinician dashboard (demo)', note: 'Public sample dashboard. No sign-in. Linked from the marketing site.' },
+  { to: '/app', label: 'Operator dashboard', note: 'Live capture-rate and sentiment intelligence across sites. Operator sign-in.' },
   { to: '/app/moderate', label: 'Moderation', note: 'Flagged feedback + reported peer content. Operator sign-in.' },
   { to: '/board', label: 'Clinic board', note: 'Waiting-room display. Best viewed full-screen on 16:9.' },
   { to: '/privacy', label: 'Privacy notice', note: 'Public fair-processing notice. Cookie preferences reopener.' },

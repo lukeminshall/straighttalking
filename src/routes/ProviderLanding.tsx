@@ -12,7 +12,7 @@ import styles from './ProviderLanding.module.css'
 const SURFACES: { href: string; icon: IconName; title: string; note: string }[] = [
   { href: '/feedback', icon: 'star', title: 'The patient app', note: 'How patients leave feedback: rate a visit, say it in their words, route it.' },
   { href: '/support', icon: 'heart', title: 'Peer support', note: 'An anonymous space where patients support one another.' },
-  { href: '/app', icon: 'trend', title: 'Operator dashboard', note: 'Live capture rate and sentiment across every site.' },
+  { href: '/dashboard', icon: 'trend', title: 'Clinician dashboard', note: 'Capture rate and sentiment across every site, on live sample data.' },
   { href: '/board', icon: 'monitor', title: 'Waiting-room board', note: 'In-clinic display of real patient voices. Best full-screen.' },
   { href: '/setup', icon: 'qr', title: 'Set up your clinic', note: 'Self-serve onboarding: configure, order materials, go live in a day.' },
 ]
@@ -109,6 +109,9 @@ export function ProviderLanding() {
               <div className={styles.sl}>median to first action on a concern</div>
             </div>
           </div>
+          <p style={{ margin: '14px 0 0', fontSize: '0.78rem', color: 'var(--st-slate)', maxWidth: '54ch' }}>
+            Illustrative figures — the outcomes Straight Talking is built to deliver, not a record of past results.
+          </p>
         </div>
       </header>
 
@@ -161,7 +164,7 @@ export function ProviderLanding() {
           </div>
           <div className={`${styles.gauge} reveal`} ref={gauge}>
             <div className={styles.gaugeNum}>92%</div>
-            <div className={styles.gaugeLab}>of eligible visits leave feedback</div>
+            <div className={styles.gaugeLab}>the capture rate we’re built to reach</div>
             <div className={styles.gaugeTrack}>
               <span style={{ width: '92%' }} />
             </div>
@@ -269,7 +272,7 @@ export function ProviderLanding() {
           <h2>Give every patient a straight line to you.</h2>
           <p>See a live walkthrough on your own sites and services. No slides, just the platform.</p>
           <div className={styles.ctaRow} style={{ justifyContent: 'center' }}>
-            <Button variant="teal" size="lg" as="a" href="mailto:hello@straighttalking.co.uk">
+            <Button variant="teal" size="lg" as="a" href="mailto:hello@straighttalking.org.uk">
               Book a demo
             </Button>
             <Button variant="ghost" size="lg" as="a" href="/support">
@@ -315,11 +318,9 @@ export function ProviderLanding() {
               <h5>Company</h5>
               <a href="#book">Contact</a>
               <a href="/privacy">Privacy policy</a>
-              <a href="#data">Terms of service</a>
               <button type="button" className={styles.linkBtn} onClick={() => reopenConsent()}>
                 Cookie preferences
               </button>
-              <a href="#data">Accessibility</a>
             </div>
           </div>
         </div>

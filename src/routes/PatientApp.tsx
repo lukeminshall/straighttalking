@@ -34,7 +34,6 @@ const ROUTES = [
 export function PatientApp() {
   const [flowOpen, setFlowOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [count, setCount] = useState(14206)
   const [lang, setLang] = useState('en')
   const t = T[lang]
   const rtl = LANGS.find((l) => l.code === lang)?.rtl ?? false
@@ -42,10 +41,8 @@ export function PatientApp() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll)
-    const tick = window.setInterval(() => Math.random() < 0.5 && setCount((c) => c + 1), 2400)
     return () => {
       window.removeEventListener('scroll', onScroll)
-      clearInterval(tick)
     }
   }, [])
 
@@ -88,14 +85,6 @@ export function PatientApp() {
             <Button variant="ghost" size="lg" as="a" href="/support">
               Talk to other patients
             </Button>
-          </div>
-          <div className={styles.counter}>
-            <span className={styles.avatars}>
-              <i /><i /><i /><i />
-            </span>
-            <div>
-              <b>{count.toLocaleString('en-GB')}</b> <em>{t.counter}</em>
-            </div>
           </div>
         </div>
       </header>
@@ -144,8 +133,8 @@ export function PatientApp() {
               <div className={styles.bl}>personal details stored</div>
             </div>
             <div>
-              <div className={styles.bn}>94%</div>
-              <div className={styles.bl}>of concerns actioned same day</div>
+              <div className={styles.bn}>Same day</div>
+              <div className={styles.bl}>concerns reach the practice team</div>
             </div>
           </div>
         </Reveal>
