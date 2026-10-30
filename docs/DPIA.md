@@ -95,7 +95,7 @@ operator accounts and platform operation.
 ## 7. Data subject rights
 
 Access, rectification, erasure, restriction, objection, and consent withdrawal are
-supported via the provider or `privacy@straighttalking.health`. Because feedback is
+supported via the provider or `hello@minshallgroup.com`. Because feedback is
 anonymous, locating a single entry may require extra detail from the subject — an
 accepted consequence of the minimisation design. Rights handling process to be agreed
 with each provider as controller.

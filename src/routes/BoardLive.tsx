@@ -3,7 +3,7 @@ import { ClinicBoard } from './ClinicBoard'
 import { hasSupabase } from '@/lib/supabase'
 import { getPublishedVoices, getYouSaidWeDid, DEFAULT_PRACTICE, type Voice, type SaidDid } from '@/lib/api'
 
-const FORM_BASE = (import.meta.env.VITE_FORM_BASE_URL as string | undefined) || 'https://straighttalking.co.uk/f'
+const FORM_BASE = (import.meta.env.VITE_FORM_BASE_URL as string | undefined) || 'https://straighttalking.org.uk/f'
 
 /**
  * Production clinic board: fetches published, consented voices and you-said-we-did

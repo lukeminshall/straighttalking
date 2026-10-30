@@ -6,6 +6,9 @@
 // returns 501 and the app falls back to its demo flow.
 import Stripe from 'stripe'
 
+// First month free: the annual fee is taken at the end of the trial, not at signup.
+const TRIAL_DAYS = 30
+
 const body = (req) => (typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {})
 
 export default async function handler(req, res) {
@@ -22,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   const stripe = new Stripe(key)
-  const origin = req.headers.origin || process.env.PUBLIC_URL || 'https://straighttalking.co.uk'
+  const origin = req.headers.origin || process.env.PUBLIC_URL || 'https://straighttalking.org.uk'
   const org = payload.org || {}
   const slug = typeof payload.slug === 'string' ? payload.slug : ''
   const mode = payload.mode === 'materials' ? 'materials' : 'signup'
@@ -46,7 +49,7 @@ export default async function handler(req, res) {
             },
           },
         ],
-        subscription_data: { metadata: { org_name: org.name || '', sites: String(org.sites || 1), slug } },
+        subscription_data: { trial_period_days: TRIAL_DAYS, metadata: { org_name: org.name || '', sites: String(org.sites || 1), slug } },
         metadata: { kind: 'signup', org_name: org.name || '', sites: String(org.sites || 1), slug },
         success_url: `${origin}/setup?status=paid&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/setup?status=cancelled`,

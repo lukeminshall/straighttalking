@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   const q = req.query || {}
   const clinicName = q.clinic || 'Your clinic'
   const slug = q.slug || slugify(clinicName)
-  const formBase = process.env.VITE_FORM_BASE_URL || 'https://straighttalking.co.uk/f'
+  const formBase = process.env.VITE_FORM_BASE_URL || 'https://straighttalking.org.uk/f'
   const value = q.value || `${formBase}/${slug}`
   const site = q.site || ''
   const items = parseItems(q.items)

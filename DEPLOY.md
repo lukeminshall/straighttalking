@@ -20,7 +20,7 @@ that are already in this repo:
 3. Drag the `dist` folder onto the page.
 
 You get a live `*.netlify.app` URL in seconds. Sign in (free) to keep it and
-attach a custom domain (e.g. straighttalking.co.uk).
+attach a custom domain (e.g. straighttalking.org.uk).
 
 ## Netlify via CLI (to your account)
 
@@ -51,7 +51,7 @@ Build command `npm run build`, output dir `dist`. `_redirects` handles routing.
 
 ## Custom domain
 
-Point `straighttalking.co.uk` at whichever host above (each has a
+Point `straighttalking.org.uk` at whichever host above (each has a
 "custom domain" flow). Force HTTPS - all of these do it automatically.
 
 ## The single-file demo (for stakeholders, no server)

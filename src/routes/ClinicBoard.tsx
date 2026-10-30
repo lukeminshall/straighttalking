@@ -26,7 +26,7 @@ export function ClinicBoard({ voices: liveVoices, saidDid, clinicName, town, for
   const ysdList = saidDid && saidDid.length ? saidDid : youSaidWeDid
   const name = clinicName || 'Sussex Imaging'
   const place = town || 'Haywards Heath'
-  const formTarget = formUrl || 'https://straighttalking.co.uk/f/sussex-imaging'
+  const formTarget = formUrl || 'https://straighttalking.org.uk/f/sussex-imaging'
   const [voiceIndex, setVoiceIndex] = useState(0)
   const [ysdIndex, setYsdIndex] = useState(0)
   const [shared, setShared] = useState(1204)

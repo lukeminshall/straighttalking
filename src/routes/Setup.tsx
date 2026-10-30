@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
-import { RESOURCES, CATEGORIES, resourcesByCategory, PRINT_SIZES, ANNUAL_FEE as ANNUAL, gbp } from '@/data/resources'
+import { RESOURCES, CATEGORIES, resourcesByCategory, PRINT_SIZES, ANNUAL_FEE as ANNUAL, TRIAL_DAYS, gbp } from '@/data/resources'
 import { Icon } from '@/components/ui/Icon'
 import { QRCode } from '@/components/brand/QRCode'
 import { startSignupCheckout, requestInvoice } from '@/lib/checkout'
@@ -9,7 +9,7 @@ import styles from './Setup.module.css'
 
 const STEPS = ['Organisation', 'What you capture', 'Order resources', 'Review & pay', 'Add details', 'Go live']
 
-const SETTINGS = ['NHS Trust', 'NHS Foundation Trust', 'Private hospital', 'Independent clinic', 'Diagnostic centre', 'ICB / system']
+const SETTINGS = ['GP practice', 'NHS Trust', 'NHS Foundation Trust', 'Private hospital', 'Independent clinic', 'Diagnostic centre', 'ICB / system']
 
 interface FeedbackOpt {
   id: string
@@ -37,8 +37,8 @@ export function Setup() {
   const [invoiceRef, setInvoiceRef] = useState<string | null>(null)
 
   // Materials are chosen here but confirmed, priced and arranged as a follow-up
-  // once the clinic is registered. Only the flat annual fee is due at signup.
-  const dueToday = ANNUAL
+  // once the clinic is registered. The first month is free, so nothing is due at signup.
+  const dueToday = 0
 
   const toggle = (id: string) =>
     setChosen((prev) => {
@@ -82,7 +82,7 @@ export function Setup() {
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
       .slice(0, 20) || 'your-clinic'
-  const liveUrl = `straighttalking.co.uk/f/${slug}`
+  const liveUrl = `straighttalking.org.uk/f/${slug}`
   const printClinic = details.display || org.name || 'Your clinic'
   const printBase = `/api/printable?clinic=${encodeURIComponent(printClinic)}&slug=${slug}`
 
@@ -108,7 +108,7 @@ export function Setup() {
           <div className={styles.railTotal}>
             <span>Due at signup</span>
             <b>{gbp(dueToday)}</b>
-            <small>{gbp(ANNUAL)}/yr · materials arranged after signup</small>
+            <small>First month free, then {gbp(ANNUAL)}/yr · materials arranged after signup</small>
           </div>
         </aside>
 
@@ -229,11 +229,11 @@ export function Setup() {
           {step === 3 && (
             <div className={styles.screen}>
               <h2>Review &amp; pay</h2>
-              <p className={styles.lead}>A single £200 annual fee covers every site. Cancel anytime. Your materials are arranged as a follow-up once you are set up, so there is nothing else to pay today.</p>
+              <p className={styles.lead}>Your first {TRIAL_DAYS} days are free. After that, a single £200 annual fee covers every site, and you can cancel any time before the trial ends without paying anything. Materials are arranged as a follow-up once you are set up, so there is nothing to pay today.</p>
               <div className={styles.summary}>
                 <div className={styles.sumRow}>
                   <span>Straight Talking annual fee ({org.sites} {org.sites === 1 ? 'site' : 'sites'})</span>
-                  <b>{gbp(ANNUAL)}/yr</b>
+                  <b>Free for {TRIAL_DAYS} days, then {gbp(ANNUAL)}/yr</b>
                 </div>
                 <div className={styles.sumRow}>
                   <span>Digital assets (email, SMS, screen, embed)</span>

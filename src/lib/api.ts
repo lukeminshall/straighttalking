@@ -8,6 +8,13 @@ export type { FeedbackRow, FeedbackSummary, Voice, SaidDid, SupportPost, Support
 export const DEFAULT_PRACTICE =
   (import.meta.env.VITE_DEFAULT_PRACTICE as string | undefined) || 'sussex-imaging'
 
+/** Practice for the current page: the slug in a /f/:slug QR link, else the default. */
+export function currentPracticeSlug(): string {
+  if (typeof window === 'undefined') return DEFAULT_PRACTICE
+  const m = window.location.pathname.match(/^\/f\/([a-z0-9-]+)/i)
+  return m ? m[1].toLowerCase() : DEFAULT_PRACTICE
+}
+
 // ---------------------------------------------------------------------------
 // Feedback
 // ---------------------------------------------------------------------------
@@ -28,7 +35,7 @@ export interface SubmitFeedbackInput {
 export async function submitFeedback(i: SubmitFeedbackInput): Promise<string> {
   if (!supabase) throw new Error('no-backend')
   const { data, error } = await supabase.rpc('submit_feedback', {
-    p_practice_slug: i.practiceSlug ?? DEFAULT_PRACTICE,
+    p_practice_slug: i.practiceSlug ?? currentPracticeSlug(),
     p_reference: i.reference,
     p_rating: i.rating,
     p_recommend: i.recommend,

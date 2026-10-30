@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   const clinicName = q.clinic || 'Your clinic'
   const size = SIZES[q.size] ? q.size : 'a4'
   const spec = SIZES[size]
-  const formBase = process.env.VITE_FORM_BASE_URL || 'https://straighttalking.co.uk/f'
+  const formBase = process.env.VITE_FORM_BASE_URL || 'https://straighttalking.org.uk/f'
   const slug = q.slug || slugify(clinicName)
   const value = q.value || `${formBase}/${slug}`
   const autoprint = q.print === '1'
