@@ -14,6 +14,7 @@ import {
   setPostStatus as apiSetPostStatus,
   setReplyStatus as apiSetReplyStatus,
   resolveReport as apiResolveReport,
+  claimInvites,
 } from '@/lib/operator-api'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
@@ -55,6 +56,9 @@ function OperatorProviderLive({ children }: { children: ReactNode }) {
     if (!db || !isSignedIn) return
     setLoading(true)
     try {
+      // Join any practices this operator has been invited to before reading, so
+      // RLS scopes every query below to their own practice(s).
+      await claimInvites(db).catch(() => 0)
       const [s, r, f, rep] = await Promise.all([
         getSummary(db).catch(() => null),
         listRecentFeedback(db).catch(() => []),

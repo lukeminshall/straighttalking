@@ -60,6 +60,13 @@ export default async function handler(req, res) {
             .maybeSingle()
           practiceId = created ? created.id : null
         }
+        // Invite the purchaser as the practice owner. They join on first sign-in
+        // (claim_practice_invites), and see only this practice's data.
+        if (practiceId && email) {
+          await db
+            .from('practice_invites')
+            .upsert({ practice_id: practiceId, email: email.toLowerCase(), role: 'owner' }, { onConflict: 'practice_id,email' })
+        }
         await db.from('orders').insert({
           practice_id: practiceId,
           email,

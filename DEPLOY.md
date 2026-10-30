@@ -61,3 +61,25 @@ npx vite build --config vite.viewer.config.ts   # -> dist-viewer/index.viewer.ht
 ```
 That one file opens from `file://` (email it, drop it on a USB stick). It has the
 bottom surface-switcher and the live demo loop, and is router-free by design.
+
+## Go-live checklist: multi-practice (GP launch)
+
+Each practice must see only its own data. Do these once, in order:
+
+1. **Apply the migration** `supabase/migrations/20261030000001_practice_scoping.sql`
+   to the production Supabase project (SQL editor, or `supabase db push`).
+2. **Clerk session token:** Clerk dashboard > Sessions > Customize session token, add
+   `{ "email": "{{user.primary_email_address}}" }`. Operators claim their practice
+   by matching this email to the invite created at sign-up.
+3. **Make yourself a platform admin** (sees every practice). Sign in once at `/app`,
+   copy your Clerk user id (`user_...`) from the Clerk dashboard, then run:
+   `insert into public.platform_admins (user_id, email) values ('user_...', 'you@example.com');`
+4. **Vercel env vars** (Production), needed by the Stripe webhook to create the
+   practice and its owner invite:
+   - `SUPABASE_SERVICE_ROLE_KEY` (Supabase > Project settings > API, secret)
+   - `STRIPE_WEBHOOK_SECRET` (Stripe > Webhooks > the endpoint's signing secret)
+5. **Existing practice** (e.g. `sussex-imaging`): add its operators by hand:
+   `insert into public.practice_invites (practice_id, email, role) select id, 'manager@practice.nhs.net', 'owner' from public.practices where slug = 'sussex-imaging';`
+
+Until step 1 is applied, every signed-in operator can read every practice's
+feedback and reply contacts, so do not onboard a second practice before then.

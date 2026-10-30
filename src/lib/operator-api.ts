@@ -5,6 +5,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { FeedbackRow, FeedbackSummary, ReportRow } from './types'
 
+/** Join any practices this operator has been invited to. Returns practices joined. */
+export async function claimInvites(db: SupabaseClient): Promise<number> {
+  const { data, error } = await db.rpc('claim_practice_invites')
+  if (error) throw error
+  return typeof data === 'number' ? data : 0
+}
+
 /** Aggregate counts for the operator dashboard (authenticated session). */
 export async function getSummary(db: SupabaseClient, slug?: string): Promise<FeedbackSummary | null> {
   const { data, error } = await db.rpc('feedback_summary', { p_practice_slug: slug ?? null })
