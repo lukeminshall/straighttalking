@@ -28,6 +28,12 @@ const DEMO_REPLIES: Record<string, SupportReply[]> = {
   ],
 }
 
+// Keep the space anonymous: reject phone numbers / long digit runs. Mirrors the
+// server-side check in submit_support_post so the rule holds even if the client
+// is bypassed. Strips common separators, then flags any run of 7+ digits —
+// catches phone numbers while allowing "ward 3", "2pm", "20 minutes".
+const hasPhoneNumber = (s: string) => /\d{7,}/.test((s ?? '').replace(/[\s().+-]/g, ''))
+
 export function Support() {
   const [posts, setPosts] = useState<SupportPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -42,10 +48,12 @@ export function Support() {
   const [topic, setTopic] = useState('')
   const [body, setBody] = useState('')
   const [posting, setPosting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   // Per-post reply drafts
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({})
   const [replyAlias, setReplyAlias] = useState<Record<string, string>>({})
+  const [replyNotice, setReplyNotice] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     let active = true
@@ -113,11 +121,17 @@ export function Support() {
 
   const onPost = async () => {
     if (!body.trim() || posting) return
+    if (hasPhoneNumber(body) || hasPhoneNumber(alias) || hasPhoneNumber(topic)) {
+      setError('Please remove any phone numbers or long numbers — keep the space anonymous. If you need to reach someone, use the urgent-help contacts above.')
+      return
+    }
+    setError('')
     setPosting(true)
     try {
       if (hasSupabase) {
         await submitSupportPost({ alias: alias.trim(), topic: topic.trim(), body: body.trim() })
-        setPosts(await listSupportPosts())
+        // Posts are held for review, so the new post is not shown until an
+        // operator approves it. Confirm receipt instead of listing it back.
       } else {
         setPosts((list) => [
           {
@@ -135,6 +149,7 @@ export function Support() {
       setAlias('')
       setTopic('')
       setBody('')
+      setSubmitted(true)
     } catch {
       setError('Sorry, that didn’t post. Please try again.')
     } finally {
@@ -146,11 +161,16 @@ export function Support() {
     const draft = (replyDraft[postId] ?? '').trim()
     if (!draft) return
     const who = (replyAlias[postId] ?? '').trim() || 'Anonymous'
+    if (hasPhoneNumber(draft) || hasPhoneNumber(who)) {
+      setError('Please remove any phone numbers or long numbers — keep the space anonymous.')
+      return
+    }
+    setError('')
     try {
       if (hasSupabase) {
         await submitSupportReply({ postId, alias: who, body: draft })
-        const fresh = await listReplies(postId)
-        setReplies((r) => ({ ...r, [postId]: fresh }))
+        // Replies are held for review too; confirm rather than show it live.
+        setReplyNotice((n) => ({ ...n, [postId]: true }))
       } else {
         setReplies((r) => ({
           ...r,
@@ -159,8 +179,8 @@ export function Support() {
             { id: `local-${Date.now()}`, post_id: postId, alias: who, body: draft, hearts: 0, created_at: new Date().toISOString() },
           ],
         }))
+        setPosts((list) => list.map((x) => (x.id === postId ? { ...x, reply_count: (x.reply_count ?? 0) + 1 } : x)))
       }
-      setPosts((list) => list.map((x) => (x.id === postId ? { ...x, reply_count: (x.reply_count ?? 0) + 1 } : x)))
       setReplyDraft((d) => ({ ...d, [postId]: '' }))
     } catch {
       setError('Sorry, that reply didn’t send. Please try again.')
@@ -184,51 +204,76 @@ export function Support() {
           Talk to people who <em>get it.</em>
         </h1>
         <p className={styles.lead}>
-          A calm, anonymous space to share how you’re feeling, ask the questions you didn’t get to ask, and hear from
-          others who’ve been where you are. No names, no sign-in.
+          A calm, anonymous space where patients share their own journey — how they’ve coped, what helped, and what
+          they’d tell someone just starting out. It’s about people supporting each other by sharing their story, not
+          giving advice. No names, no sign-in.
         </p>
 
         <div className={styles.safety}>
           <span aria-hidden="true">♡</span>
           <div>
-            <b>If you need urgent help, this isn’t the place.</b>
-            Contact your GP or call <a href="tel:111">NHS 111</a>, or <a href="tel:999">999</a> in an emergency. For
-            mental-health support any time, Samaritans are on <a href="tel:116123">116 123</a>. Please don’t share
-            anything that identifies you or someone else.
+            <b>This is a space to share your own story — not for medical, clinical or any other advice.</b>
+            It’s for patients supporting each other by sharing how they’ve managed, not a place to give or get
+            treatment advice. If you need urgent help this isn’t the place: contact your GP or call{' '}
+            <a href="tel:111">NHS 111</a>, or <a href="tel:999">999</a> in an emergency. For mental-health support any
+            time, Samaritans are on <a href="tel:116123">116 123</a>. Please don’t include phone numbers or anything
+            that identifies you or someone else.
           </div>
         </div>
 
         <div className={`${styles.card} ${styles.composer}`}>
-          <h3>Start a conversation</h3>
-          <div className={styles.row2}>
-            <input
-              className={styles.field}
-              value={alias}
-              onChange={(e) => setAlias(e.target.value)}
-              placeholder="A name to go by (optional)"
-              maxLength={40}
-            />
-            <input
-              className={styles.field}
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="Topic, e.g. Before your scan (optional)"
-              maxLength={60}
-            />
-          </div>
-          <textarea
-            className={styles.field}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder="What’s on your mind? Share as much or as little as you like."
-            maxLength={4000}
-          />
-          <div className={styles.composerActions}>
-            <span className={styles.muted}>Kind, anonymous, and read by others going through the same thing.</span>
-            <button className={styles.primary} onClick={onPost} disabled={!body.trim() || posting}>
-              {posting ? 'Posting…' : 'Post'}
-            </button>
-          </div>
+          <h3>Share your story</h3>
+          {submitted ? (
+            <div className={styles.posted}>
+              <b>Thanks for sharing.</b>
+              Your post will appear once our team has checked it — this keeps the space safe and anonymous for
+              everyone. It usually appears within a day.
+              <div>
+                <button className={styles.primary} onClick={() => setSubmitted(false)}>
+                  Share something else
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className={styles.scopeNote}>
+                Tell others about <b>your own journey</b> — how you managed, what helped, what you’d tell someone just
+                starting out. This isn’t for medical or clinical advice, and please don’t include phone numbers or
+                anything that identifies you.
+              </p>
+              <div className={styles.row2}>
+                <input
+                  className={styles.field}
+                  value={alias}
+                  onChange={(e) => setAlias(e.target.value)}
+                  placeholder="A name to go by (optional)"
+                  maxLength={40}
+                />
+                <input
+                  className={styles.field}
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="Topic, e.g. Before your scan (optional)"
+                  maxLength={60}
+                />
+              </div>
+              <textarea
+                className={styles.field}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                placeholder="Share your experience — how you coped, what helped, what you’d tell someone just starting out."
+                maxLength={4000}
+              />
+              <div className={styles.composerActions}>
+                <span className={styles.muted}>
+                  Checked by our team before it appears. Anonymous, and read by others going through the same thing.
+                </span>
+                <button className={styles.primary} onClick={onPost} disabled={!body.trim() || posting}>
+                  {posting ? 'Posting…' : 'Share'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         <div className={styles.feedHead}>
@@ -281,27 +326,33 @@ export function Support() {
                       </div>
                     </div>
                   ))}
-                  <div className={styles.replyComposer}>
-                    <input
-                      className={styles.field}
-                      value={replyAlias[p.id] ?? ''}
-                      onChange={(e) => setReplyAlias((a) => ({ ...a, [p.id]: e.target.value }))}
-                      placeholder="You"
-                      maxLength={40}
-                      style={{ maxWidth: 110 }}
-                    />
-                    <input
-                      className={styles.field}
-                      value={replyDraft[p.id] ?? ''}
-                      onChange={(e) => setReplyDraft((d) => ({ ...d, [p.id]: e.target.value }))}
-                      onKeyDown={(e) => e.key === 'Enter' && onReply(p.id)}
-                      placeholder="Write something supportive…"
-                      maxLength={4000}
-                    />
-                    <button className={styles.primary} onClick={() => onReply(p.id)} disabled={!(replyDraft[p.id] ?? '').trim()}>
-                      Send
-                    </button>
-                  </div>
+                  {replyNotice[p.id] ? (
+                    <div className={styles.replyNotice}>
+                      Thanks — your reply will appear once our team has checked it.
+                    </div>
+                  ) : (
+                    <div className={styles.replyComposer}>
+                      <input
+                        className={styles.field}
+                        value={replyAlias[p.id] ?? ''}
+                        onChange={(e) => setReplyAlias((a) => ({ ...a, [p.id]: e.target.value }))}
+                        placeholder="You"
+                        maxLength={40}
+                        style={{ maxWidth: 110 }}
+                      />
+                      <input
+                        className={styles.field}
+                        value={replyDraft[p.id] ?? ''}
+                        onChange={(e) => setReplyDraft((d) => ({ ...d, [p.id]: e.target.value }))}
+                        onKeyDown={(e) => e.key === 'Enter' && onReply(p.id)}
+                        placeholder="Share something supportive from your own experience…"
+                        maxLength={4000}
+                      />
+                      <button className={styles.primary} onClick={() => onReply(p.id)} disabled={!(replyDraft[p.id] ?? '').trim()}>
+                        Send
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
